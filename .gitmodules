@@ -1,0 +1,6 @@
+[submodule "discord/submodules/Trusty-cogs"]
+	path = discord/submodules/Trusty-cogs
+	url = https://github.com/TrustyJAID/Trusty-cogs
+[submodule "discord/submodules/coffee-cogs"]
+	path = discord/submodules/coffee-cogs
+	url = https://github.com/coffeebank/coffee-cogs

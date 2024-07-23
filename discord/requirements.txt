@@ -1,0 +1,7 @@
+# Red-DiscordBot
+wheel==0.43.0
+Red-DiscordBot==3.5.10
+
+# coffee-cogs/msgmover
+aiohttp==3.9.5
+requests==2.32.3

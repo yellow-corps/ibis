@@ -1,0 +1,19 @@
+services:
+  discord:
+    build: 
+      context: ./discord
+      dockerfile: ./Containerfile
+    restart: on-failure:3
+    env_file:
+      - ./.env
+    volumes:
+      - type: volume
+        source: discord-config
+        target: /root/.config/Red-DiscordBot
+      - type: volume
+        source: discord-local
+        target: /root/.local/share/Red-DiscordBot
+
+volumes:
+  discord-config:
+  discord-local:

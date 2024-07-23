@@ -1,0 +1,9 @@
+{
+  "ibis": {
+    "DATA_PATH": "/root/.local/share/Red-DiscordBot/data/ibis",
+    "COG_PATH_APPEND": "cogs",
+    "CORE_PATH_APPEND": "core",
+    "STORAGE_TYPE": "JSON",
+    "STORAGE_DETAILS": {}
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "0": {
+    "GLOBAL": {
+      "schema_version": 3,
+      "last_system_info": {
+        "python_version": [3, 11],
+        "machine": "x86_64",
+        "system": "Linux"
+      },
+      "color": 15905569,
+      "locale": "en-AU",
+      "regional_format": "en-AU",
+      "packages": ["alias", "cleanup", "extendedmodlog", "msgmover"]
+    },
+    "CUSTOM_GROUPS": {
+      "Core": {
+        "0": {
+          "COG_DISABLE_SETTINGS": 2,
+          "CUSTOM_GROUPS": 2,
+          "COMMAND": 2,
+          "SHARED_API_TOKENS": 2
+        }
+      },
+      "Alias": { "8927348724": {} },
+      "Cleanup": { "8927348724": {} },
+      "ExtendedModLog": { "154457677895": {} },
+      "Msgmover": { "806715409318936616": {} }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "8927348724": {
+    "GLOBAL": {
+      "handled_string_creator": true,
+      "entries": [
+        {
+          "name": "purge",
+          "command": "cleanup messages 1000",
+          "creator": null,
+          "guild": null,
+          "uses": 0
+        }
+      ]
+    }
+  }
+}
