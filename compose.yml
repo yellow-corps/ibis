@@ -1,19 +1,76 @@
+name: ibis
+
 services:
   discord:
-    build: 
+    container_name: discord
+    build:
       context: ./discord
       dockerfile: ./Containerfile
-    restart: on-failure:3
-    env_file:
-      - ./.env
+    restart: unless-stopped
+    environment:
+      RED_TOKEN: "${RED_TOKEN}"
     volumes:
       - type: volume
         source: discord-config
         target: /root/.config/Red-DiscordBot
       - type: volume
-        source: discord-local
-        target: /root/.local/share/Red-DiscordBot
+        source: discord-core-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/core
+      - type: volume
+        source: discord-alias-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Alias
+      - type: volume
+        source: discord-cleanup-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Cleanup
+      - type: volume
+        source: discord-extendedmodlog-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/ExtendedModLog
+      - type: volume
+        source: discord-modlog-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/ModLog
+      - type: volume
+        source: discord-msgmover-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Msgmover
+      - type: volume
+        source: discord-shopify-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Shopify
+    ports:
+      - "8080:8080"
+
+  shopify:
+    container_name: shopify
+    profiles:
+      - shopify
+    build:
+      context: ./shopify
+      dockerfile: ./Containerfile
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+      SHOPIFY_CLIENT_ID: "${SHOPIFY_CLIENT_ID}"
+      SHOPIFY_CLIENT_SECRET: "${SHOPIFY_CLIENT_SECRET}"
+    network_mode: "service:discord"
+
+  ngrok:
+    container_name: ngrok
+    profiles:
+      - shopify
+    image: ngrok/ngrok:latest
+    environment:
+      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+    command:
+      - http
+      - "--domain=${NGROK_DOMAIN}"
+      - "http://discord:8080"
+    depends_on:
+      - shopify
 
 volumes:
   discord-config:
-  discord-local:
+  discord-core-settings:
+  discord-alias-settings:
+  discord-cleanup-settings:
+  discord-extendedmodlog-settings:
+  discord-modlog-settings:
+  discord-msgmover-settings:
+  discord-shopify-settings:

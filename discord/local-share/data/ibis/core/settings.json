@@ -3,14 +3,12 @@
     "GLOBAL": {
       "schema_version": 3,
       "last_system_info": {
-        "python_version": [3, 11],
-        "machine": "x86_64",
-        "system": "Linux"
+        "python_version": [3, 11]
       },
       "color": 15905569,
       "locale": "en-AU",
       "regional_format": "en-AU",
-      "packages": ["alias", "cleanup", "extendedmodlog", "msgmover"]
+      "packages": ["alias", "cleanup", "extendedmodlog", "msgmover", "shopify"]
     },
     "CUSTOM_GROUPS": {
       "Core": {
@@ -24,7 +22,8 @@
       "Alias": { "8927348724": {} },
       "Cleanup": { "8927348724": {} },
       "ExtendedModLog": { "154457677895": {} },
-      "Msgmover": { "806715409318936616": {} }
+      "Msgmover": { "806715409318936616": {} },
+      "Shopify": { "410722909754055635": {} }
     }
   }
 }

@@ -5,3 +5,6 @@ Red-DiscordBot==3.5.10
 # coffee-cogs/msgmover
 aiohttp==3.9.5
 requests==2.32.3
+
+# aiohttp-json-rpc patch
+aiohttp-json-rpc @ https://github.com/yellow-corps/aiohttp-json-rpc/releases/download/v0.13.3%2Byellow-corps/aiohttp-json-rpc-0.13.3+yellow.corps.tar.gz

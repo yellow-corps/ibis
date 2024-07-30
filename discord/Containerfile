@@ -4,10 +4,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt /root/requirements.txt
-COPY config/config.json /root/.config/Red-DiscordBot/config.json
-COPY local-share/data/ibis /root/.local/share/Red-DiscordBot/data/ibis 
-COPY submodules/Trusty-cogs/extendedmodlog/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/extendedmodlog/
-COPY submodules/coffee-cogs/msgmover/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/msgmover/
 
 RUN <<EOF
 
@@ -19,4 +15,10 @@ python -m pip install -r /root/requirements.txt
 
 EOF
 
-CMD ["redbot", "ibis", "--team-developers-are-owners", "--mentionable", "--prefix", "[@]"]
+COPY config/config.json /root/.config/Red-DiscordBot/config.json
+COPY local-share/data/ibis /root/.local/share/Red-DiscordBot/data/ibis
+COPY submodules/Trusty-cogs/extendedmodlog/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/extendedmodlog/
+COPY submodules/coffee-cogs/msgmover/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/msgmover/
+COPY cogs/shopify/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/shopify/
+
+CMD ["redbot", "ibis", "--rpc", "--team-developers-are-owners", "--mentionable", "--prefix", "[@]"]

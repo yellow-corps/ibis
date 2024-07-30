@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "Shopify",
+  "short": "Post Shopify orders into a channel",
+  "requirements": [],
+  "description": "Post Shopify orders into a channel",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}
