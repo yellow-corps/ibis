@@ -24,7 +24,6 @@ const output = [
   `  "orders/updated",`,
   `  "orders/fulfilled",`,
   `  "orders/cancelled",`,
-  `  "orders/delete",`,
   `]`,
   `  uri = "https://${process.env.NGROK_DOMAIN}/api/webhooks"`,
 

@@ -88,7 +88,6 @@ const webhookHandlers: WebhookHandlersParam = {
   ORDERS_UPDATED: defaultHandler,
   ORDERS_FULFILLED: defaultHandler,
   ORDERS_CANCELLED: defaultHandler,
-  ORDERS_DELETE: defaultHandler
 };
 
 const app = express();

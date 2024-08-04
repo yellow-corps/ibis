@@ -150,7 +150,7 @@ _Example_
 
 You can customise the messages that are shown for each status change of an order.
 
-The statuses are `created`, `updated`, `fulfilled`, `cancelled`, and `deleted`.
+The statuses are `created`, `updated`, `fulfilled`, and `cancelled`
 
 The Order Name (e.g. "Order #1234") is represented in the message as `{}`.
 

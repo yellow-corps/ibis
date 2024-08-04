@@ -85,7 +85,6 @@ class Shopify(commands.Cog):
                 "updated": "{} was updated.",
                 "fulfilled": "{} was fulfilled.",
                 "cancelled": "{} was cancelled.",
-                "deleted": "{} was deleted.",
             },
             "staff": [],
         }
@@ -147,9 +146,7 @@ class Shopify(commands.Cog):
     async def shopify_message(
         self,
         ctx: commands.Context,
-        message_type: Literal[
-            "created", "updated", "fulfilled", "cancelled", "deleted"
-        ],
+        message_type: Literal["created", "updated", "fulfilled", "cancelled"],
         *,
         content: str = None,
     ):
@@ -233,8 +230,6 @@ class Shopify(commands.Cog):
                 await self.orders_fulfilled(order)
             case "ORDERS_CANCELLED":
                 await self.orders_cancelled(order)
-            case "ORDERS_DELETE":
-                await self.orders_deleted(order)
 
         return True
 
@@ -253,10 +248,6 @@ class Shopify(commands.Cog):
     async def orders_cancelled(self, order: ShopifyOrder):
         thread = await self.find_or_open_thread(order)
         await thread.send(await self.get_message("cancelled", order.order_name()))
-
-    async def orders_deleted(self, order: ShopifyOrder):
-        thread = await self.find_or_open_thread(order)
-        await thread.send(await self.get_message("deleted", order.order_name()))
 
     async def find_or_open_thread(
         self, order: ShopifyOrder, *, emit_embed: bool = False
