@@ -56,7 +56,7 @@ class ShopifyUtils:
         timestamp = datetime.fromisoformat(iso_timestamp)
 
         short_timestamp = discord.utils.format_dt(timestamp, "f")
-        relative_timestamp = discord.utils.format_dt(timestamp, "f")
+        relative_timestamp = discord.utils.format_dt(timestamp, "R")
         return "{}, {}".format(short_timestamp, relative_timestamp)
 
     @staticmethod
