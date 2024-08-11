@@ -95,9 +95,11 @@ class ShopifyUtils:
         return "{}, {}".format(short_timestamp, relative_timestamp)
 
     @staticmethod
-    def build_embed(order: ShopifyOrder):
+    def build_embed(event: str, order: ShopifyOrder):
         embed = discord.Embed(
-            title=order.order_name(), description=order.products(), url=order.url()
+            title="{} {}".format(order.order_name(), event),
+            description=order.products(),
+            url=order.url(),
         )
         embed.add_field(name="Placed By", value=order.mention_customer())
         embed.add_field(name="Placed At", value=order.created_at())
@@ -269,26 +271,26 @@ class Shopify(commands.Cog):
         return True
 
     async def orders_created(self, order: ShopifyOrder):
-        thread = await self.find_or_open_thread(order)
+        thread = await self.find_or_open_thread("created", order)
         await thread.send(await self.get_message("created", order.order_name()))
 
     async def orders_updated(self, order: ShopifyOrder):
         if not order.is_actually_update():
             return
 
-        thread = await self.find_or_open_thread(order, emit_embed=True)
+        thread = await self.find_or_open_thread("updated", order, emit_embed=True)
         await thread.send(await self.get_message("updated", order.order_name()))
 
     async def orders_fulfilled(self, order: ShopifyOrder):
-        thread = await self.find_or_open_thread(order)
+        thread = await self.find_or_open_thread("fulfilled", order)
         await thread.send(await self.get_message("fulfilled", order.order_name()))
 
     async def orders_cancelled(self, order: ShopifyOrder):
-        thread = await self.find_or_open_thread(order)
+        thread = await self.find_or_open_thread("cancelled", order)
         await thread.send(await self.get_message("cancelled", order.order_name()))
 
     async def find_or_open_thread(
-        self, order: ShopifyOrder, *, emit_embed: bool = False
+        self, event: str, order: ShopifyOrder, *, emit_embed: bool = False
     ) -> discord.Thread:
         channel = await self.get_channel()
 
@@ -311,6 +313,6 @@ class Shopify(commands.Cog):
                 await thread.add_user(user)
 
         if emit_embed:
-            await thread.send(embed=ShopifyUtils.build_embed(order))
+            await thread.send(embed=ShopifyUtils.build_embed(event, order))
 
         return thread
