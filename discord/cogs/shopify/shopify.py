@@ -11,38 +11,10 @@ class ShopifyOrder:
         self._shop = str(body["shop"])
         self._url = str(body["order_status_url"])
         self._created_at = str(body["created_at"])
-        self._closed_at = str(body["closed_at"]) if body["closed_at"] else None
-        self._cancelled_at = str(body["cancelled_at"]) if body["cancelled_at"] else None
-        self._updated_at = str(body["updated_at"]) if body["updated_at"] else None
-        self._other_events = list(
-            map(
-                lambda d: datetime.fromisoformat(d),
-                filter(
-                    lambda d: d != None,
-                    [self._created_at, self._closed_at, self._cancelled_at]
-                    + (
-                        [
-                            fulfillment["created_at"]
-                            for fulfillment in body["fulfillments"]
-                        ]
-                        if body["fulfillments"]
-                        else []
-                    ),
-                ),
-            )
-        )
-        self._customer = (
-            [
-                str(body["customer"]["first_name"]),
-                str(body["customer"]["last_name"]),
-            ]
-            if body["customer"]
-            else ["<unknown customer>"]
-        )
-        self._products = [
-            {"name": str(line_item["name"]), "quantity": int(line_item["quantity"])}
-            for line_item in body["line_items"]
-        ]
+        self._updated_at = str(body["updated_at"])
+        self._other_events = ShopifyUtils.find_events(body)
+        self._customer = ShopifyUtils.find_customer(body["customer"])
+        self._products = ShopifyUtils.find_products(body["line_items"])
 
     def order_name(self) -> str:
         return "Order {}".format(self._name)
@@ -87,6 +59,39 @@ class ShopifyOrder:
 
 
 class ShopifyUtils:
+
+    @staticmethod
+    def find_events(body) -> list[datetime]:
+        return [
+            datetime.fromisoformat(event)
+            for event in [body["created_at"], body["closed_at"], body["cancelled_at"]]
+            + [
+                fulfillment["created_at"]
+                for fulfillment in body.get("fulfillments", [])
+            ]
+            if event is not None
+        ]
+
+    @staticmethod
+    def find_customer(customer) -> list[str]:
+        customer = (
+            customer
+            if customer
+            else {"first_name": "<unknown customer>", "last_name": ""}
+        )
+
+        return [
+            str(customer["first_name"]),
+            str(customer["last_name"]),
+        ]
+
+    @staticmethod
+    def find_products(line_items) -> list:
+        return [
+            {"name": str(line_item["name"]), "quantity": int(line_item["quantity"])}
+            for line_item in line_items
+        ]
+
     @staticmethod
     def format_timestamp(iso_timestamp: str) -> str:
         timestamp = datetime.fromisoformat(iso_timestamp)
