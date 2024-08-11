@@ -14,10 +14,14 @@ class ShopifyOrder:
         self._closed_at = str(body["closed_at"]) if body["closed_at"] else None
         self._cancelled_at = str(body["cancelled_at"]) if body["cancelled_at"] else None
         self._updated_at = str(body["updated_at"]) if body["updated_at"] else None
-        self._customer = [
-            str(body["customer"]["first_name"]),
-            str(body["customer"]["last_name"]),
-        ]
+        self._customer = (
+            [
+                str(body["customer"]["first_name"]),
+                str(body["customer"]["last_name"]),
+            ]
+            if body["customer"]
+            else ["<unknown customer>"]
+        )
         self._products = [
             {"name": str(line_item["name"]), "quantity": int(line_item["quantity"])}
             for line_item in body["line_items"]
