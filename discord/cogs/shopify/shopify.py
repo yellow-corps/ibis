@@ -10,10 +10,27 @@ class ShopifyOrder:
         self._name = str(body["name"])
         self._shop = str(body["shop"])
         self._url = str(body["order_status_url"])
-        self._created_at = str(body["created_at"]) if body["created_at"] else None
+        self._created_at = str(body["created_at"])
         self._closed_at = str(body["closed_at"]) if body["closed_at"] else None
         self._cancelled_at = str(body["cancelled_at"]) if body["cancelled_at"] else None
         self._updated_at = str(body["updated_at"]) if body["updated_at"] else None
+        self._other_events = list(
+            map(
+                lambda d: datetime.fromisoformat(d),
+                filter(
+                    lambda d: d != None,
+                    [self._created_at, self._closed_at, self._cancelled_at]
+                    + (
+                        [
+                            fulfillment["created_at"]
+                            for fulfillment in body["fulfillments"]
+                        ]
+                        if body["fulfillments"]
+                        else []
+                    ),
+                ),
+            )
+        )
         self._customer = (
             [
                 str(body["customer"]["first_name"]),
@@ -57,28 +74,12 @@ class ShopifyOrder:
         )
 
     def is_actually_update(self) -> bool:
-        # obviously, if no updated_at, then not an update
-        if not self._updated_at:
-            return False
-
-        other_events = list(
-            map(
-                lambda d: datetime.fromisoformat(d),
-                filter(
-                    lambda d: d != None,
-                    [self._created_at, self._closed_at, self._cancelled_at],
-                ),
-            )
-        )
-
-        # update occurred before other events? ignore it
-        if not other_events:
+        if not (self._updated_at or self._other_events):
             return False
 
         updated_at = datetime.fromisoformat(self._updated_at)
 
-        # update appears to have occurred within five seconds of one of the other events, ignore it
-        for event in other_events:
+        for event in self._other_events:
             if abs(event - updated_at).seconds < 5:
                 return False
 
