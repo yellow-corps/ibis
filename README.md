@@ -4,23 +4,23 @@ A discord bot for the yellow corps
 
 # Features
 
-- Message Auditing (Trusty-cogs/extendedmodlog)
-- Message Relaying (coffee-cogs/msgmover)
+- Message Auditing (via [Trusty-cogs/extendedmodlog](https://github.com/TrustyJAID/Trusty-cogs/tree/1bfaeb9/extendedmodlog))
+- Message Relaying (via [coffee-cogs/msgmover](https://github.com/coffeebank/coffee-cogs/tree/fb3ca44/msgmover))
 - Message Purging
 - Shopify Orders
 
 # Requirments
 
-- Git
-- Docker/Podman
-- A Discord App/Bot Token
+- [Git](https://git-scm.com)
+- [Docker](https://www.docker.com)/[Podman](https://podman-desktop.io)
+- A [Discord](https://discord.com/developers) App/Bot Token
   - _Adding a Bot to a Discord server is not covered in these instructions._
   - _See [Red-DiscordBot](https://docs.discord.red/en/stable/bot_application_guide.html) Documentation._
-- (Optional) A Shopify App Client ID and Client Secret
+- (Optional) A [Shopify App](https://shopify.dev) Client ID and Client Secret
   - _Best practice is to create an app specifically for the Shopify shop being connected._
   - _See [Shopify Custom Apps](https://help.shopify.com/en/manual/apps/app-types/custom-apps) Documentation._
   - _For the scopes, select `read_orders`._
-- (Required for Shopify) An Ngrok Authtoken and Domain
+- (Required for Shopify) An [Ngrok](https://ngrok.com) Authtoken and Domain
   - _You must use a static domain with Ngrok for this to all work._
   - _As of 04/08/2024, Ngrok allows you to allocate one random static domain to your account._
 
@@ -71,35 +71,37 @@ This will do the following:
 
 ## 1. Limit Who Can Use The Bot
 
-Add one or more people to the allowlist for the bot, starting with yourself.
+Add one or more people to the local allowlist for the bot, including yourself.
+
+This should prevent users not on the list from interacting with the bot at all.
 
 ```discord
-[@] allowlist add @<User>
-[@] allowlist remove @<User>
-[@] allowlist list
-[@] allowlist clear
+[@] localallowlist add [@<User>/"User"/"Role"]
+[@] localallowlist remove [@<User>/"User"/"Role"]
+[@] localallowlist list
+[@] localallowlist clear
 ```
 
 _Example_
 
 ```discord
-[@] allowlist add @SpiltCoffee
+[@] localallowlist add @SpiltCoffee "Knocked Over Mocha" "Bot Commander Role"
 ```
-
-This should prevent any unintended actions from the bot taking place.
 
 ## 2. Configure the Audit Channel
 
-Tell the bot which channel to post audit messages to.
+Tell the bot which channel to post audit messages to, and log all events.
 
-```discorddocke
+```discord
 [@] modlogset modlog #<Channel>
+[@] modlog all true
 ```
 
 _Example_
 
 ```discord
 [@] modlogset modlog #audit
+[@] modlog all true
 ```
 
 ## 3. Configure Message Relays
@@ -109,40 +111,60 @@ Tell the bot which channels to relay to other channels.
 ```discord
 [@] msgrelay add #<Source Channel> #<Target Channel>
 ```
+> [!IMPORTANT]
+> 
+> Make sure to answer the two followup questions it asks. Responding "Yes" to both is fine, if you're not otherwise sure.
+
+> [!NOTE]
+>
+> If the bot does not have write permissions in the `#<Source Channel>`, it will warn that "some permissions may be missing" after running the relay command.
+>
+> This is because the bot attempts, one time only, to send a test message to the source channel. It is safe to ignore the warning in this scenario.
 
 _Example_
 
-```
+```discord
 [@] msgrelay add #source #target
+```
+
+### 3a. Turn Off Relay Timer
+
+Turn off the relay timer by seting it to 0.
+
+Doing this prevents the message relay from deleting messages in the relay channel when the source message is deleted.
+
+```discord
+[@] msgrelay settimer 0
 ```
 
 ## 4. Purge messages when necessary
 
 Use one of the following methods to cleanup messages using the bot.
 
-```
+```discord
 [@] cleanup messages #<Number of messages>
 ```
 
 An alias exists to cleanup 1000 messages at a time.
 
-```
+```discord
 [@] purge
 ```
-
-Just keep in mind you will also need to say "Yes" when cleaning up/purging more than 99 messages at a time.
+> [!NOTE]
+>
+> Just keep in mind you will also need to say "Yes" when cleaning up/purging more than 99 messages at a time.
 
 ## 5. Configure Shopify
 
 ### 5a. Set Shop channel
 
-```
+```discord
 [@] shopify channel #<Shop Channel>
 ```
 
 _Example_
 
-```
+```discord
 [@] shopify channel #shop
 ```
 
@@ -154,13 +176,13 @@ The statuses are `created`, `updated`, `fulfilled`, and `cancelled`
 
 The Order Name (e.g. "Order #1234") is represented in the message as `{}`.
 
-```
+```discord
 [@] shopify message <status> <message>
 ```
 
 _Example_
 
-```
+```discord
 [@] shopify message created Your {} has been created!
 ```
 
@@ -172,13 +194,13 @@ _This would appear as..._
 
 Staff Users will always be added to threads created by the bot.
 
-```
+```discord
 [@] shopify staff add @<Staff>
 [@] shopify staff remove @<Staff>
 ```
 
 _Example_
 
-```
+```discord
 [@] shopify staff add @Frontdesk
 ```
