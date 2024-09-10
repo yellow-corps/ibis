@@ -20,6 +20,7 @@ A discord bot for the yellow corps
   - _Best practice is to create an app specifically for the Shopify shop being connected._
   - _See [Shopify Custom Apps](https://help.shopify.com/en/manual/apps/app-types/custom-apps) Documentation._
   - _For the scopes, select `read_orders`._
+- (Required for Shopify) [Node.js](https://nodejs.org)
 - (Required for Shopify) An [Ngrok](https://ngrok.com) Authtoken and Domain
   - _You must use a static domain with Ngrok for this to all work._
   - _As of 04/08/2024, Ngrok allows you to allocate one random static domain to your account._
@@ -111,8 +112,9 @@ Tell the bot which channels to relay to other channels.
 ```discord
 [@] msgrelay add #<Source Channel> #<Target Channel>
 ```
+
 > [!IMPORTANT]
-> 
+>
 > Make sure to answer the two followup questions it asks. Responding "Yes" to both is fine, if you're not otherwise sure.
 
 > [!NOTE]
@@ -150,6 +152,7 @@ An alias exists to cleanup 1000 messages at a time.
 ```discord
 [@] purge
 ```
+
 > [!NOTE]
 >
 > Just keep in mind you will also need to say "Yes" when cleaning up/purging more than 99 messages at a time.

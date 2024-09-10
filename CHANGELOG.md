@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed error in command in README
+- Clarified installation requirements in README (requires Node.js for Shopify functionality)
 
 ## [1.0.0] - 2024-09-01
 
