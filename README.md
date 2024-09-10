@@ -41,7 +41,7 @@ Copy the `.env.example` file to `.env` and fill out the variables within.
 ## 2a. (Optional) Deploy Shopify
 
 ```shell
-(cd shopify && npm run install && npm run deploy)
+(cd shopify && npm install && npm run deploy)
 ```
 
 This will configure your app on Shopify correctly with the correct Webhooks.
