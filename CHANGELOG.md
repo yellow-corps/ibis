@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed error in command in README
 - Clarified installation requirements in README (requires Node.js for Shopify functionality)
 
+### Changed
+
+- Changed ngrok to always restart unless stopped
+
 ## [1.0.0] - 2024-09-01
 
 - Initial Release
