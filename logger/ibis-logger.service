@@ -1,0 +1,12 @@
+[Unit]
+Description=ibis-logger
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/path/to/ibis/.env
+WorkingDirectory=/path/to/ibis/logger
+ExecStart=/path/to/ibis/logger/logger.sh
+
+[Install]
+WantedBy=multi-user.target
