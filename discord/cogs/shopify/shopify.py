@@ -1,6 +1,7 @@
 import discord
 from typing import Union, Literal
 from datetime import datetime
+import re
 from redbot.core import commands, bot, Config
 
 
@@ -29,7 +30,21 @@ class ShopifyOrder:
         return ShopifyUtils.format_timestamp(self._created_at)
 
     def customer(self) -> Union[discord.User, None]:
-        return discord.utils.find(lambda u: u.name in self._customer, self._bot.users)
+        # try to match exactly first
+        customer = discord.utils.find(
+            lambda u: u.name in self._customer,
+            self._bot.users,
+        )
+
+        if customer:
+            return customer
+
+        # otherwise, sanitise before matching
+        return discord.utils.find(
+            lambda u: ShopifyUtils.sanitise_name(u.name)
+            in [ShopifyUtils.sanitise_name(name) for name in self._customer],
+            self._bot.users,
+        )
 
     def mention_customer(self) -> str:
         user = self.customer()
@@ -71,6 +86,10 @@ class ShopifyUtils:
             ]
             if event is not None
         ]
+
+    @staticmethod
+    def sanitise_name(name: str) -> str:
+        return re.sub(r"[._ ]", "", name.lower())
 
     @staticmethod
     def find_customer(customer) -> list[str]:
