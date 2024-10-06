@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-10-06
+
 ### Added
 
 - Added a basic system of logging
@@ -27,5 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Versions -->
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.1.0
 [1.0.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.0.0
