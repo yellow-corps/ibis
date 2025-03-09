@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Bump dependencies to latest:
+  - Red-DiscordBot to 3.5.17
+  - wheel to 0.45.1
+  - dropped aiohttp as Red-DiscordBot already requests same version
+
 ## [1.1.0] - 2024-10-06
 
 ### Added

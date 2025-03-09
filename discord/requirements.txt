@@ -1,9 +1,8 @@
 # Red-DiscordBot
-wheel==0.43.0
-Red-DiscordBot==3.5.12
+wheel==0.45.1
+Red-DiscordBot==3.5.17
 
 # coffee-cogs/msgmover
-aiohttp==3.9.5
 requests==2.32.3
 
 # aiohttp-json-rpc patch
