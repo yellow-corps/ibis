@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- UniqueInvites, a cog to create single use, non-expiring, unique invites
+
 ### Changed
 
 - Bump dependencies to latest:
