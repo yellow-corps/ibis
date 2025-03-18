@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "UniqueInvites",
+  "short": "Creates unique invite links",
+  "requirements": [],
+  "description": "Creates unique invite links",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}
