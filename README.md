@@ -8,6 +8,7 @@ A discord bot for the yellow corps
 - Message Relaying (via [coffee-cogs/msgmover](https://github.com/coffeebank/coffee-cogs/tree/fb3ca44/msgmover))
 - Message Purging
 - Shopify Orders
+- Unique Invite Creation
 
 # Requirments
 

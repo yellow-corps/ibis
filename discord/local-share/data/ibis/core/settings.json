@@ -8,7 +8,14 @@
       "color": 15905569,
       "locale": "en-AU",
       "regional_format": "en-AU",
-      "packages": ["alias", "cleanup", "extendedmodlog", "msgmover", "shopify"]
+      "packages": [
+        "alias",
+        "cleanup",
+        "extendedmodlog",
+        "msgmover",
+        "uniqueinvites",
+        "shopify"
+      ]
     },
     "CUSTOM_GROUPS": {
       "Core": {
@@ -23,6 +30,7 @@
       "Cleanup": { "8927348724": {} },
       "ExtendedModLog": { "154457677895": {} },
       "Msgmover": { "806715409318936616": {} },
+      "UniqueInvites": { "278581805461420503": {} },
       "Shopify": { "410722909754055635": {} }
     }
   }

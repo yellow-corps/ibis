@@ -32,6 +32,9 @@ services:
         source: discord-msgmover-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Msgmover
       - type: volume
+        source: discord-uniqueinvites-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/UniqueInvites
+      - type: volume
         source: discord-shopify-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Shopify
     ports:
@@ -74,4 +77,5 @@ volumes:
   discord-extendedmodlog-settings:
   discord-modlog-settings:
   discord-msgmover-settings:
+  discord-uniqueinvites-settings:
   discord-shopify-settings:
