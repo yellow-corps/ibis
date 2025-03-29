@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+LABEL org.opencontainers.image.source=https://github.com/yellow-corps/ibis
+LABEL org.opencontainers.image.description="ibis discord bot"
+LABEL org.opencontainers.image.licenses=MIT
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 

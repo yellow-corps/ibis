@@ -3,6 +3,7 @@ name: ibis
 services:
   discord:
     container_name: discord
+    image: ghcr.io/yellow-corps/ibis-discord:latest
     build:
       context: ./discord
       dockerfile: ./Containerfile
@@ -44,6 +45,7 @@ services:
     container_name: shopify
     profiles:
       - shopify
+    image: ghcr.io/yellow-corps/ibis-shopify:latest
     build:
       context: ./shopify
       dockerfile: ./Containerfile
