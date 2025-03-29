@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-03-29
+
 ### Added
 
 - UniqueInvites, a cog to create single use, non-expiring, unique invites
@@ -40,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Versions -->
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/yellow-corps/ibis/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.1.0
 [1.0.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.0.0
