@@ -208,3 +208,26 @@ _Example_
 ```discord
 [@] shopify staff add @Frontdesk
 ```
+
+## 6. Create Unique Invites
+
+You can create unique, single use, non-expiring invites using the bot.
+
+```
+[@] uniqueinvites create <channel> <amount>
+```
+
+_Example_
+
+```
+[@] uniqueinvites create #announcements 500
+```
+
+> [!NOTE]
+>
+> Due to rate limits, the bot will take it's time to create the invites. Each invite takes about 2s to create.
+>
+> Once the bot is finished making invites, or if it experiences an error along the way, it will output
+> the created invites in response to your command, as to notify you that it is finished.
+>
+> If you want to cancel an ongoing invite creation process, see `[@] uniqueinvites stop`.
