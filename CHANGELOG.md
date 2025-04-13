@@ -15,8 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refactored Shopify cog code to use better practices
 - Updated Shopify container code to avoid vulnerable dependencies
-- Switched container to -alpine to avoid vulnerable dependencies
+- Switched Shopify container to -alpine to avoid vulnerable dependencies
 - Updated UniqueInvites cog code to use better practices
+- Switched Discord container to -alpine to avoid vulnerable dependencies
+- Eradicated the startup version check DM
 
 ## [1.2.0] - 2025-03-29
 
