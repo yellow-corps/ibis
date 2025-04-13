@@ -3,11 +3,10 @@ from collections.abc import Callable
 from io import StringIO
 from typing import Union
 
-import discord
-from discord import Invite
-from discord.ext import tasks
 from redbot.core import commands, Config
-from redbot.core.utils import menus, predicates
+from redbot.core.utils import predicates
+import discord
+from discord.ext import tasks
 
 
 class InviteHandler(ABC):
@@ -35,27 +34,27 @@ class InviteHandler(ABC):
         await self.ctx.react_quietly("⏳")
         await self.process.start()
 
-    async def stop(self):
+    async def stop(self, successful: bool = False):
         self.process.stop()
         await self.ctx.message.remove_reaction("⏳", self.ctx.me)
+        if successful:
+            await self.ctx.message.add_reaction("✅")
         await self.flush()
         self.finish_callback()
 
     @tasks.loop(seconds=1.0)
     async def process(self):
         if self.should_stop():
-            return await self.stop()
+            return await self.stop(True)
 
         try:
             async with self.ctx.typing():
                 await self.loop()
         except Exception as ex:
-            await self.error(ex)
-
-    async def error(self, ex: Exception):
-        await self.ctx.reply("An error occurred while processing invites.")
-        await self.stop()
-        raise ex
+            await self.ctx.reply("An error occurred while processing invites.")
+            await self.ctx.message.add_reaction("❌")
+            await self.stop()
+            raise ex
 
 
 class InviteCreator(InviteHandler):
@@ -98,7 +97,7 @@ class InviteRevoker(InviteHandler):
         self,
         ctx: commands.Context,
         channel: Union[discord.TextChannel, discord.ForumChannel],
-        invites: list[Invite],
+        invites: list[discord.Invite],
         finish_callback: Callable,
     ):
         super().__init__(ctx, finish_callback)
@@ -107,8 +106,9 @@ class InviteRevoker(InviteHandler):
         self.amount = len(invites)
 
     async def flush(self):
+        processed = self.amount - len(self.invites)
         await self.ctx.reply(
-            f"{self.amount - len(self.invites)}/{self.amount} invites revoked for {self.channel.mention}"
+            f"{processed}/{self.amount} invites revoked for {self.channel.mention}"
         )
 
     def should_stop(self):
@@ -126,11 +126,19 @@ class UniqueInvites(commands.Cog):
 
         self.handler = None
 
+    async def reply_success(self, message: discord.Message, reply: str = None):
+        if reply:
+            await message.reply(reply)
+        await message.add_reaction("✅")
+
+    async def reply_fail(self, message: discord.Message, reply: str):
+        await message.reply(reply)
+        await message.add_reaction("❌")
+
     @commands.group()
     @commands.admin()
     async def uniqueinvites(self, ctx: commands.Context):
         "UniqueInvites commands"
-        pass
 
     @uniqueinvites.command()
     async def create(
@@ -142,18 +150,24 @@ class UniqueInvites(commands.Cog):
         """Create unique, non-expiring, single use invites for the specified channel"""
 
         if amount <= 0:
-            await ctx.send("Must specify a positive amount of invites to create")
+            await ctx.reply_fail(
+                ctx.message, "Must specify a positive amount of invites to create"
+            )
 
         if amount > 1000:
-            await ctx.send(
-                "For everyone's sanity, must specify an amount of invites less than or equal to 1000"
+            await ctx.reply_fail(
+                ctx.message,
+                "For everyone's sanity, you must specify an amount of invites less than or equal "
+                + "to 1000",
             )
 
         if not self.handler:
             self.handler = InviteCreator(ctx, channel, amount, self.finish_callback)
             await self.handler.start()
         else:
-            await ctx.send("Already in the process of handling invites, please wait.")
+            await ctx.reply_fail(
+                ctx.message, "Already in the process of handling invites, please wait."
+            )
 
     @uniqueinvites.command()
     async def revoke(
@@ -170,10 +184,11 @@ class UniqueInvites(commands.Cog):
         )
 
         if len(invites) == 0:
-            await ctx.send(f"No invites to revoke for {channel.mention}")
-            return
+            return await self.reply_fail(
+                ctx.message, f"No invites to revoke for {channel.mention}"
+            )
 
-        await ctx.send(f"Revoke {len(invites)} invites from {channel.mention}?")
+        await ctx.reply(f"Revoke {len(invites)} invites from {channel.mention}?")
         pred = predicates.MessagePredicate.yes_or_no(ctx)
         await ctx.bot.wait_for("message", check=pred)
         if not pred.result:
@@ -183,16 +198,18 @@ class UniqueInvites(commands.Cog):
             self.handler = InviteRevoker(ctx, channel, invites, self.finish_callback)
             await self.handler.start()
         else:
-            await ctx.send("Already in the process of handling invites, please wait.")
+            await self.reply_fail(
+                ctx.message, "Already in the process of handling invites, please wait."
+            )
 
     @uniqueinvites.command(name="stop")
     async def stop(self, ctx: commands.Context):
         """Stops an ongoing invite process and outputs the current invites generated"""
         if self.handler:
             await self.handler.stop()
-            await ctx.send("Stopped process")
+            await self.reply_success(ctx.message, "Stopped process")
         else:
-            await ctx.send("Not running an invite process")
+            await self.reply_fail(ctx.message, "Not running an invite process")
 
     def finish_callback(self):
         self.handler = None
