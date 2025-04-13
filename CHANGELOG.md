@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] 2025-04-13
+
 ### Added
 
 - SOS Tickets, a cog to handle an emergency ticket system using text channels
@@ -55,7 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Versions -->
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/yellow-corps/ibis/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/yellow-corps/ibis/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.1.0
 [1.0.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.0.0
