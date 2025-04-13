@@ -1,0 +1,26 @@
+FROM node:22-alpine AS builder
+
+WORKDIR /builder
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+COPY src/ ./src/
+
+RUN npm run build && npm install --omit dev
+
+FROM tyrrrz/discordchatexporter
+
+LABEL org.opencontainers.image.source=https://github.com/yellow-corps/ibis
+LABEL org.opencontainers.image.description="ibis discord chat exporter"
+LABEL org.opencontainers.image.licenses=MIT
+
+RUN apk add "nodejs=~22"
+
+COPY --from=builder /builder/target/index.mjs ./
+COPY --from=builder /builder/node_modules ./node_modules
+COPY --from=builder /usr/local/bin/docker-entrypoint.sh /opt/app/docker-entrypoint.sh
+
+STOPSIGNAL SIGKILL
+CMD ["node", "--trace-uncaught", "index.mjs"]

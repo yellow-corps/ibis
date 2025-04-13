@@ -25,5 +25,6 @@ COPY submodules/Trusty-cogs/extendedmodlog/ /root/.local/share/Red-DiscordBot/da
 COPY submodules/coffee-cogs/msgmover/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/msgmover/
 COPY cogs/uniqueinvites/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/uniqueinvites/
 COPY cogs/shopify/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/shopify/
+COPY cogs/sostickets/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/sostickets/
 
 CMD ["redbot", "ibis", "--rpc", "--team-developers-are-owners", "--mentionable", "--prefix", "[@]"]

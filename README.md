@@ -8,6 +8,7 @@ A discord bot for the yellow corps
 - Message Relaying (via [coffee-cogs/msgmover](https://github.com/coffeebank/coffee-cogs/tree/fb3ca44/msgmover))
 - Message Purging
 - Shopify Orders
+- SOS Tickets
 - Unique Invite Creation
 
 # Requirments
@@ -62,6 +63,8 @@ This will do the following:
 - If Shopify is configured, `shopify` and `ngrok` containers will also be created.
   - `shopify` is responsible for relaying the Shopify HTTP Webhooks to Discord via JSON RPC calls.
   - `ngrok` is responsible for providing ingress from the outside world to the `shopify` container for the Shopify HTTP Webhooks, without needing to punch holes in firewalls.
+- If the exporter for SOS Tickets is configured, an `exporter` container will also be created.
+  - `exporter` provides a small wrapper around the [Tyrrrz/DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter) project, for the bot to use with SOS Tickets.
 
 # Configuration
 
@@ -209,7 +212,23 @@ _Example_
 [@] shopify staff add @Frontdesk
 ```
 
-## 6. Create Unique Invites
+## 6. Configure SOS Tickets
+
+Allows users to create emergency tickets using text channels.
+
+It's rather involved, so you may want to explore how to best configure it for your needs. At a high level, you'll likely want to run these commands:
+
+```
+[@] sostickets channel name <name>
+[@] sostickets category active <active category>
+[@] sostickets category archive <archive category>
+[@] sostickets export channel <export channel>
+[@] sostickets export auto_prune True
+[@] sostickets responders add @<Responders>
+[@] sostickets responders enable
+```
+
+## 7. Create Unique Invites
 
 You can create unique, single use, non-expiring invites using the bot.
 

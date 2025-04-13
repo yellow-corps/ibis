@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- SOS Tickets, a cog to handle an emergency ticket system using text channels
+
 ## [1.2.0] - 2025-03-29
 
 ### Added
