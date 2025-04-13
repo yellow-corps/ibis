@@ -1,15 +1,23 @@
-FROM node:20-slim
+FROM node:22-alpine AS builder
+
+WORKDIR /builder
+
+COPY package.json package-lock.json ./
+
+RUN apk add --no-cache python3 py3-setuptools make g++ && npm ci
+
+COPY src/index.ts ./src/
+
+RUN npm run build && npm install --omit dev
+
+FROM node:22-alpine
 
 LABEL org.opencontainers.image.source=https://github.com/yellow-corps/ibis
 LABEL org.opencontainers.image.description="ibis shopify webhook receiver"
 LABEL org.opencontainers.image.licenses=MIT
 
-COPY package.json package-lock.json ./
+COPY --from=builder /builder/target/index.mjs ./
+COPY --from=builder /builder/node_modules ./node_modules
 
-RUN npm ci
-
-COPY src/index.ts ./src/
-
-RUN npm run build
-
+STOPSIGNAL SIGKILL
 CMD ["node", "target/index.mjs"]

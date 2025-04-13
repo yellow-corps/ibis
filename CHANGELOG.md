@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - SOS Tickets, a cog to handle an emergency ticket system using text channels
 
+### Updated
+
+- Refactored Shopify cog code to use better practices
+- Updated Shopify container code to avoid vulnerable dependencies
+- Switched container to -alpine to avoid vulnerable dependencies
+
 ## [1.2.0] - 2025-03-29
 
 ### Added

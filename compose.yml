@@ -53,7 +53,6 @@ services:
       context: ./shopify
       dockerfile: ./Containerfile
     restart: unless-stopped
-    stop_signal: SIGKILL
     environment:
       SHOPIFY_CLIENT_ID: "${SHOPIFY_CLIENT_ID}"
       SHOPIFY_CLIENT_SECRET: "${SHOPIFY_CLIENT_SECRET}"
