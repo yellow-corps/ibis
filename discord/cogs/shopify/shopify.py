@@ -1,12 +1,12 @@
-import discord
-from typing import Union, Literal
 from datetime import datetime
+from typing import Union, Literal
 import re
-from redbot.core import commands, bot, Config
+from redbot.core import commands, Config
+import discord
 
 
 class ShopifyOrder:
-    def __init__(self, bot: bot.Red, body):
+    def __init__(self, bot: commands.Bot, body):
         self._bot = bot
         self._name = str(body["name"])
         self._shop = str(body["shop"])
@@ -18,7 +18,7 @@ class ShopifyOrder:
         self._products = ShopifyUtils.find_products(body["line_items"])
 
     def order_name(self) -> str:
-        return "Order {}".format(self._name)
+        return f"Order {self._name}"
 
     def url(self) -> str:
         return self._url
@@ -48,14 +48,14 @@ class ShopifyOrder:
 
     def mention_customer(self) -> str:
         user = self.customer()
-        if user != None:
+        if user:
             return user.mention
         return " ".join(self._customer)
 
     def products(self) -> str:
         return "\n".join(
             [
-                "`{}x` {}".format(str(product["quantity"]).rjust(3), product["name"])
+                f"`{str(product["quantity"]).rjust(3)}x` { product["name"]}"
                 for product in self._products
             ]
         )
@@ -117,12 +117,12 @@ class ShopifyUtils:
 
         short_timestamp = discord.utils.format_dt(timestamp, "f")
         relative_timestamp = discord.utils.format_dt(timestamp, "R")
-        return "{}, {}".format(short_timestamp, relative_timestamp)
+        return f"{short_timestamp}, {relative_timestamp}"
 
     @staticmethod
     def build_embed(event: str, order: ShopifyOrder):
         embed = discord.Embed(
-            title="{} {}".format(order.order_name(), event),
+            title=f"{order.order_name()} {event}",
             description=order.products(),
             url=order.url(),
         )
@@ -133,7 +133,7 @@ class ShopifyUtils:
 
 
 class Shopify(commands.Cog):
-    def __init__(self, bot: bot.Red):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
         self.config = Config.get_conf(
@@ -156,8 +156,10 @@ class Shopify(commands.Cog):
     async def get_channel(self) -> Union[discord.TextChannel, discord.ForumChannel]:
         return self.bot.get_channel(await self.config.shop_channel())
 
-    async def set_channel(self, channel_id: int, /):
-        await self.config.shop_channel.set(channel_id)
+    async def set_channel(
+        self, channel: Union[discord.TextChannel, discord.ForumChannel], /
+    ):
+        await self.config.shop_channel.set(channel.id)
 
     async def get_message(self, message_type: str, name: str = None, /) -> str:
         message = (await self.config.messages())[message_type]
@@ -170,22 +172,28 @@ class Shopify(commands.Cog):
         messages[message_type] = message
         await self.config.messages.set(messages)
 
-    async def get_staff(self) -> list[discord.User]:
-        staff = await self.config.staff()
-        staff_users = []
+    async def get_staff(self) -> list[Union[discord.User, discord.Role]]:
+        return [
+            self.bot.get_member(id) or self.bot.get_role(id)
+            for id in await self.config.staff()
+        ]
 
-        for staff_id in staff:
-            user = self.bot.get_user(staff_id)
-            if user:
-                staff_users.append(user)
+    async def set_staff(self, users: list[Union[discord.User, discord.Role]]):
+        await self.config.staff.set([u.id for u in users])
 
-        return staff_users
+    async def reply_success(self, message: discord.Message, reply: str = None):
+        if reply:
+            await message.reply(reply)
+        await message.add_reaction("✅")
+
+    async def reply_fail(self, message: discord.Message, reply: str):
+        await message.reply(reply)
+        await message.add_reaction("❌")
 
     @commands.group()
     @commands.is_owner()
     async def shopify(self, ctx: commands.Context):
         """Shopify commands"""
-        pass
 
     @shopify.command(name="channel")
     async def shopify_channel(
@@ -194,15 +202,14 @@ class Shopify(commands.Cog):
         channel: Union[discord.TextChannel, discord.ForumChannel, None],
     ):
         """Globally get or set Shopify output channel."""
-        if channel:
-            await self.set_channel(channel.id)
-            await ctx.message.add_reaction("✅")
-        else:
-            await ctx.send(
-                "Shopify channel currently set to {}".format(
-                    (await self.get_channel()).mention
-                )
+        if not channel:
+            await self.reply_success(
+                ctx.message,
+                f"Shopify channel currently set to {(await self.get_channel()).mention}",
             )
+        else:
+            await self.set_channel(channel)
+            await self.reply_success(ctx.message)
 
     @shopify.command(name="message")
     async def shopify_message(
@@ -214,68 +221,72 @@ class Shopify(commands.Cog):
     ):
         """Globally get or set Shopify messages for events."""
         if not content:
-            await ctx.send(
-                "Current message for `{}` events is `{}`.".format(
-                    message_type, await self.get_message(message_type)
-                )
+            content = await self.get_message(message_type)
+            await self.reply_success(
+                ctx.message,
+                f"Current message for `{message_type}` events is `{content}`.",
             )
         else:
             await self.set_message(message_type, content)
-            await ctx.message.add_reaction("✅")
+            await self.reply_success(ctx.message)
 
     @shopify.group(name="staff", autohelp=False)
     async def shopify_staff(self, ctx: commands.Context):
         """Globally add or remove staff for being added to order threads."""
         if not ctx.invoked_subcommand:
-            users = await self.get_staff()
+            users = ", ".join(u.mention for u in await self.get_staff())
             if users:
-                await ctx.send(
-                    "Current staff: {}".format(", ".join(u.mention for u in users))
-                )
+                await self.reply_success(ctx.message, f"Current staff: {users}")
             else:
-                await ctx.send("No staff currently added.")
+                await self.reply_success(ctx.message, "No staff currently added.")
 
     @shopify_staff.command(name="add")
     async def shopify_staff_add(
-        self, ctx: commands.Context, users: commands.Greedy[discord.User]
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[Union[discord.User, discord.Role]],
     ):
         """Globally add staff to being added to order threads."""
         if not users:
-            await ctx.send(
-                "No users provided or I cannot see any of the users you mentioned."
+            return await self.reply_fail(
+                ctx.message,
+                "No users provided or I cannot see any of the users you mentioned.",
             )
-            return await ctx.send_help()
 
         current_staff = await self.config.staff()
-        new_staff = list(set(current_staff + [u.id for u in users]))
+        new_staff = list(set(current_staff + users))
 
         if current_staff == new_staff:
-            await ctx.send("All of the users provided were already marked as staff.")
-            return await ctx.message.add_reaction("❌")
+            return await self.reply_fail(
+                ctx.message, "All of the users provided were already marked as staff."
+            )
 
         await self.config.staff.set(new_staff)
-        await ctx.message.add_reaction("✅")
+        await self.reply_success(ctx.message)
 
     @shopify_staff.command(name="remove")
     async def shopify_staff_remove(
-        self, ctx: commands.Context, users: commands.Greedy[discord.User]
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[Union[discord.User, discord.Role]],
     ):
         """Globally remove staff from being added to order threads."""
         if not users:
-            await ctx.send(
-                "No users provided or I cannot see any of the users you mentioned."
+            return await self.reply_fail(
+                ctx.message,
+                "No users provided or I cannot see any of the users you mentioned.",
             )
-            return await ctx.message.add_reaction("❌")
 
         current_staff = await self.config.staff()
-        new_staff = list(set(current_staff) - set([u.id for u in users]))
+        new_staff = list(set(current_staff) - set(users))
 
         if current_staff == new_staff:
-            await ctx.send("None of the users provided were marked as staff.")
-            return await ctx.message.add_reaction("❌")
+            return await self.reply_fail(
+                ctx.message, "None of the users provided were marked as staff."
+            )
 
         await self.config.staff.set(new_staff)
-        await ctx.message.add_reaction("✅")
+        await self.reply_success(ctx.message)
 
     async def webhook(self, topic: str, body) -> bool:
         if not await self.config.shop_channel():
