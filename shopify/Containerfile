@@ -20,4 +20,4 @@ COPY --from=builder /builder/target/index.mjs ./
 COPY --from=builder /builder/node_modules ./node_modules
 
 STOPSIGNAL SIGKILL
-CMD ["node", "target/index.mjs"]
+CMD ["node", "index.mjs"]

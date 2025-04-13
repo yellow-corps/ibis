@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+- Fix mistake in Shopify container CMD
+
 ## [1.3.0] - 2025-04-13
 
 ### Added
