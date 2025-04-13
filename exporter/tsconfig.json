@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  }
+}

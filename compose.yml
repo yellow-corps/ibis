@@ -38,6 +38,9 @@ services:
       - type: volume
         source: discord-shopify-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Shopify
+      - type: volume
+        source: discord-sostickets-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/SosTickets
     ports:
       - "8080:8080"
 
@@ -71,6 +74,19 @@ services:
     depends_on:
       - shopify
 
+  exporter:
+    container_name: exporter
+    profiles:
+      - exporter
+    image: ghcr.io/yellow-corps/ibis-exporter:latest
+    build:
+      context: ./exporter
+      dockerfile: ./Containerfile
+    restart: unless-stopped
+    environment:
+      RED_TOKEN: "${RED_TOKEN}"
+    network_mode: "service:discord"
+
 volumes:
   discord-config:
   discord-core-settings:
@@ -81,3 +97,4 @@ volumes:
   discord-msgmover-settings:
   discord-uniqueinvites-settings:
   discord-shopify-settings:
+  discord-sostickets-settings:
