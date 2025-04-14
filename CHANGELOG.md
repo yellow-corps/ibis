@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.2] - 2025-04-14
 
-## Fixed
+### Fixed
 
 - Fix first SOS ticket using -true instead of -1
 - Fix bug in @ sostickets export command
 
 ## [1.3.1] - 2025-04-13
 
-## Fixed
+### Fixed
 
 - Fix mistake in Shopify container CMD
 
