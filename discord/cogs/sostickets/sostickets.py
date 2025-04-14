@@ -281,13 +281,12 @@ class SosTickets(commands.Cog):
     async def sostickets_export(self, ctx: commands.Context):
         """Configures archived SOS tickets exporting functionality"""
         if not ctx.invoked_subcommand:
-            export_channel = (
-                await self.get_export_channel(ctx.guild)
-            ).mention or "<no channel>"
-            export_auto_prune = await self.get_export_auto_prune(ctx.guild)
+            channel = await self.get_export_channel(ctx.guild)
+            channel = channel.mention if channel else "<no channel>"
+            auto_prune = await self.get_export_auto_prune(ctx.guild)
             await self.reply_success(
                 ctx.message,
-                f"Current export channel: {export_channel}, auto pruning: {export_auto_prune}",
+                f"Current export channel: {channel}, auto pruning: {auto_prune}",
             )
 
     @sostickets_export.command(name="set")

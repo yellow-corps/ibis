@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 
 - Fix first SOS ticket using -true instead of -1
+- Fix bug in @ sostickets export command
 
 ## [1.3.1] - 2025-04-13
 
