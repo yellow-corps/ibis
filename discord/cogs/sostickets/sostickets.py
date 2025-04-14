@@ -53,7 +53,7 @@ class SosTickets(commands.Cog):
         return channel.name == await self.get_channel_name(channel.guild)
 
     async def get_channel_next_no(self, guild: discord.Guild) -> int:
-        return await self.config.guild(guild).channel.next_no()
+        return int(await self.config.guild(guild).channel.next_no())
 
     async def set_channel_next_no(self, guild: discord.Guild, next_no: int):
         await self.config.guild(guild).channel.next_no.set(next_no)
