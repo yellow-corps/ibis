@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "format-changelog": "prettier --write --end-of-line lf CHANGELOG.md",
-    "bump-changelog": "changelog --create --url https://github.com/yellow-corps/ibis --release"
+    "bump-changelog": "changelog --create --url https://github.com/yellow-corps/ibis --release",
+    "get-latest-changelog": "changelog --latest-release-full"
   },
   "dependencies": {
     "keep-a-changelog": "^2.6.2",
