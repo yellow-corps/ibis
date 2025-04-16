@@ -33,14 +33,17 @@ services:
         source: discord-msgmover-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Msgmover
       - type: volume
-        source: discord-uniqueinvites-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/UniqueInvites
+        source: discord-persistmessages-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/PersistMessages
       - type: volume
         source: discord-shopify-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Shopify
       - type: volume
         source: discord-sostickets-settings
         target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/SosTickets
+      - type: volume
+        source: discord-uniqueinvites-settings
+        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/UniqueInvites
     ports:
       - "8080:8080"
 
@@ -94,6 +97,7 @@ volumes:
   discord-extendedmodlog-settings:
   discord-modlog-settings:
   discord-msgmover-settings:
-  discord-uniqueinvites-settings:
+  discord-persistmessages-settings:
   discord-shopify-settings:
   discord-sostickets-settings:
+  discord-uniqueinvites-settings:

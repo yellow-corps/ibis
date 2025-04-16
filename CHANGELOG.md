@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Persist Messages, a cog to persist messages beyond restarts.
+
 ## [1.3.2] - 2025-04-14
 
 ### Fixed

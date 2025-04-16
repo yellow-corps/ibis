@@ -250,3 +250,13 @@ _Example_
 > the created invites in response to your command, as to notify you that it is finished.
 >
 > If you want to cancel an ongoing invite creation process, see `[@] uniqueinvites stop`.
+
+## 8. Persist messages for auditing
+
+The configuration of `modlog` above will log any messages deleted or edited, but only if the bot still has the message cached in memory. The memory cache is limited to a number of messages, and will be cleared ~~if~~ when the bot is restarted.
+
+We can persist messages to disk so that they can be looked up at any time, including after restarts.
+
+```
+[@] persistmessages set true
+```
