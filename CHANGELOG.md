@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Persist Messages, a cog to persist messages beyond restarts.
 
+### Fixed
+
+- Fix bug in how SOS Tickets handled messages from DMs (in that it shouldn't be handling them)
+
 ## [1.3.2] - 2025-04-14
 
 ### Fixed

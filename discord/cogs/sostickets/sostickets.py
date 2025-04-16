@@ -156,9 +156,10 @@ class SosTickets(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if (
-            self.handling_sos
-            or message.author.bot
+            message.author.bot
+            or not isinstance(message.channel, discord.TextChannel)
             or not await self.is_start_channel(message.channel)
+            or self.handling_sos
         ):
             return
 
