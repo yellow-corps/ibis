@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-04-16
+
 ### Added
 
 - Persist Messages, a cog to persist messages beyond restarts.
@@ -62,24 +64,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added a basic system of logging
 
-### Fixed
-
-- Fixed error in command in README
-- Clarified installation requirements in README (requires Node.js for Shopify functionality)
-
 ### Changed
 
 - Changed ngrok to always restart unless stopped
 - Taught Shopify cog to fuzzy match customers as a plan B
 
+### Fixed
+
+- Fixed error in command in README
+- Clarified installation requirements in README (requires Node.js for Shopify functionality)
+
 ## [1.0.0] - 2024-09-01
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.3.2...HEAD
-[1.3.2]: https://github.com/yellow-corps/ibis/compare/v1.3.0...v1.3.2
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/yellow-corps/ibis/compare/v1.3.2...v1.4.0
+[1.3.2]: https://github.com/yellow-corps/ibis/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/yellow-corps/ibis/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/yellow-corps/ibis/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/yellow-corps/ibis/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.1.0
+[1.1.0]: https://github.com/yellow-corps/ibis/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/yellow-corps/ibis/releases/tag/v1.0.0
