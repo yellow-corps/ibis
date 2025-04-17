@@ -17,7 +17,7 @@ git commit -m "v$version"
 git tag "v$version"
 git push origin --atomic main "v$version"
 
-changelog="$(npm run get-latest-changelog)"
+changelog="$(npm run --silent get-latest-changelog)"
 
 gh release create "v$version" --title "v$version" --notes "$changelog"
 
