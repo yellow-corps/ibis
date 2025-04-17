@@ -19,6 +19,6 @@ git push origin --atomic main "v$version"
 
 changelog="$(npm run get-latest-changelog)"
 
-gh release "v$version" --title "v$version" --notes "$changelog"
+gh release create "v$version" --title "v$version" --notes "$changelog"
 
 ./build-and-push-docker.sh $version
