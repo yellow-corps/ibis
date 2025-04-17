@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Support linux/amd64 and linux/arm64 platforms for containers
+
 ### Fixed
 
 - Fix inability to build duckdb on Alpine Linux in some circumstances

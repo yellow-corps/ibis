@@ -8,7 +8,7 @@ function build-and-push-docker() (
   local container="$1"
   local version="$2"
   cd "$container"
-  docker build -t "ghcr.io/yellow-corps/ibis-$container:$version" -f Containerfile .
+  docker buildx build --platform linux/amd64,linx/arm64 -t "ghcr.io/yellow-corps/ibis-$container:$version" -f Containerfile .
   docker push "ghcr.io/yellow-corps/ibis-$container:$version"
 )
 
