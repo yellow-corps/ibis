@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt /root/requirements.txt
 
-RUN apk add --no-cache python3 git py3-pip gcc python3-dev musl-dev linux-headers
+RUN apk add --no-cache python3 git py3-pip g++ python3-dev musl-dev linux-headers
 
 RUN python -m pip install pip && \
   python -m pip install -r /root/requirements.txt
