@@ -11,6 +11,7 @@
       "packages": [
         "alias",
         "cleanup",
+        "csvmembers",
         "extendedmodlog",
         "msgmover",
         "uniqueinvites",
@@ -28,6 +29,7 @@
       },
       "Alias": { "8927348724": {} },
       "Cleanup": { "8927348724": {} },
+      "CsvMembers": { "778440330267960653": {} },
       "ExtendedModLog": { "154457677895": {} },
       "Msgmover": { "806715409318936616": {} },
       "PersistMessages": { "931967579004876408": {} },

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CSV Members, a cog that outputs a list of members in a server in a CSV
+
 ## [1.4.1] - 2025-04-17
 
 ### Changed

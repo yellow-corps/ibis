@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "CSV Members",
+  "short": "Outputs a CSV of members in the server",
+  "requirements": [],
+  "description": "Outputs a CSV of members in the server",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}
