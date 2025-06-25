@@ -32,7 +32,6 @@ class CsvMembers(commands.Cog):
                 "Display Name (If Different)",
             ]
         )
-        print(guild.members)
         for member in guild.members:
             writer.writerow(
                 [
