@@ -55,7 +55,7 @@ class ShopifyOrder:
     def products(self) -> str:
         return "\n".join(
             [
-                f"`{str(product["quantity"]).rjust(3)}x` { product["name"]}"
+                f"`{str(product['quantity']).rjust(3)}x` {product['name']}"
                 for product in self._products
             ]
         )
