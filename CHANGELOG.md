@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Various problems with the Shopify cog (webhooks, staff members)
+
 ## [1.5.2] - 2025-06-25
 
 ### Fixed

@@ -133,6 +133,8 @@ class ShopifyUtils:
 
 
 class Shopify(commands.Cog):
+    bot: commands.Bot
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -173,8 +175,9 @@ class Shopify(commands.Cog):
         await self.config.messages.set(messages)
 
     async def get_staff(self) -> list[Union[discord.User, discord.Role]]:
+        guild = (await self.get_channel()).guild
         return [
-            self.bot.get_member(id) or self.bot.get_role(id)
+            guild.get_member(id) or guild.get_role(id)
             for id in await self.config.staff()
         ]
 
@@ -209,7 +212,11 @@ class Shopify(commands.Cog):
             )
         else:
             await self.set_channel(channel)
-            await self.reply_success(ctx.message)
+            await self.set_staff([])
+            await self.reply_success(
+                ctx.message,
+                "Channel updated. Staff members were cleared, so make sure to `shopify staff add <staff>` staff members again.",
+            )
 
     @shopify.command(name="message")
     async def shopify_message(
@@ -244,48 +251,81 @@ class Shopify(commands.Cog):
     async def shopify_staff_add(
         self,
         ctx: commands.Context,
-        users: commands.Greedy[Union[discord.User, discord.Role]],
+        staff: commands.Greedy[Union[discord.Member, discord.Role]],
     ):
         """Globally add staff to being added to order threads."""
-        if not users:
+        channel = await self.get_channel()
+        if not channel:
             return await self.reply_fail(
                 ctx.message,
-                "No users provided or I cannot see any of the users you mentioned.",
+                "Please set the channel first using `shopify channel <channel>`",
             )
 
-        current_staff = await self.config.staff()
-        new_staff = list(set(current_staff + users))
+        guild = channel.guild
+
+        if not staff:
+            return await self.reply_fail(
+                ctx.message,
+                "No staff provided or I cannot see any of the members/roles you mentioned.",
+            )
+
+        for user in staff:
+            if user.guild != guild:
+                return await self.reply_fail(
+                    ctx.message,
+                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                )
+
+        current_staff = await self.get_staff()
+        new_staff = list(set(current_staff + staff))
 
         if current_staff == new_staff:
             return await self.reply_fail(
-                ctx.message, "All of the users provided were already marked as staff."
+                ctx.message,
+                "All of the members/roles provided were already marked as staff.",
             )
 
-        await self.config.staff.set(new_staff)
+        await self.set_staff(new_staff)
         await self.reply_success(ctx.message)
 
     @shopify_staff.command(name="remove")
     async def shopify_staff_remove(
         self,
         ctx: commands.Context,
-        users: commands.Greedy[Union[discord.User, discord.Role]],
+        staff: commands.Greedy[Union[discord.Member, discord.Role]],
     ):
         """Globally remove staff from being added to order threads."""
-        if not users:
+        channel = await self.get_channel()
+        if not await self.get_channel():
             return await self.reply_fail(
                 ctx.message,
-                "No users provided or I cannot see any of the users you mentioned.",
+                "Please set the channel first using `shopify channel <channel>`",
             )
 
-        current_staff = await self.config.staff()
-        new_staff = list(set(current_staff) - set(users))
+        guild = channel.guild
+
+        if not staff:
+            return await self.reply_fail(
+                ctx.message,
+                "No staff provided, or I cannot see any of the members/roles you mentioned.",
+            )
+
+        for user in staff:
+            if user.guild != guild:
+                return await self.reply_fail(
+                    ctx.message,
+                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                )
+
+        current_staff = await self.get_staff()
+        new_staff = list(set(current_staff) - set(staff))
 
         if current_staff == new_staff:
             return await self.reply_fail(
-                ctx.message, "None of the users provided were marked as staff."
+                ctx.message, "None of the members/roles provided were marked as staff."
             )
 
-        await self.config.staff.set(new_staff)
+        await self.set_staff(new_staff)
         await self.reply_success(ctx.message)
 
     async def webhook(self, topic: str, body) -> bool:
@@ -335,20 +375,36 @@ class Shopify(commands.Cog):
         )
 
         if not thread:
-            emit_embed = True
-
-            thread = await channel.create_thread(
-                name=order.order_name(), type=discord.ChannelType.public_thread
-            )
-
-            customer = order.customer()
-            if customer:
-                await thread.add_user(customer)
-
-            for user in await self.get_staff():
-                await thread.add_user(user)
+            emit_embed = False
+            if isinstance(channel, discord.TextChannel):
+                thread = await channel.create_thread(
+                    name=order.order_name(), type=discord.ChannelType.public_thread
+                )
+                await thread.send(embed=ShopifyUtils.build_embed(event, order))
+            else:
+                applicable_tags = filter(
+                    lambda t: t.name.lower() == "order", channel.available_tags
+                )
+                thread = (
+                    await channel.create_thread(
+                        name=order.order_name(),
+                        applied_tags=applicable_tags,
+                        embed=ShopifyUtils.build_embed(event, order),
+                    )
+                ).thread
 
         if emit_embed:
             await thread.send(embed=ShopifyUtils.build_embed(event, order))
+
+        customer = order.customer()
+        if customer:
+            await thread.add_user(customer)
+
+        for user in await self.get_staff():
+            if isinstance(user, discord.Role):
+                for member in user.members:
+                    await thread.add_user(member)
+            else:
+                await thread.add_user(user)
 
         return thread
