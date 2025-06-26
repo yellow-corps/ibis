@@ -39,8 +39,8 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.container }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.container }}
           context: ${{ github.workspace }}/${{ matrix.container }}
           file: ${{ github.workspace }}/${{ matrix.container }}/Containerfile
           tags: |
