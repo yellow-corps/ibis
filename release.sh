@@ -21,4 +21,4 @@ changelog="$(npm run --silent get-latest-changelog)"
 
 gh release create "v$version" --title "v$version" --notes "$changelog"
 
-echo "Now run \"./build-and-push-docker.sh $version\" or trigger the deploy-docker.yml workflow with \"v$version\""
+gh workflow run deploy-docker.yml -f version=v$version
