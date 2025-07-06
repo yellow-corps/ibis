@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Crash in Shopify cog when attempting to add members that do not have permission to see the current channel
+
 ## [1.5.3] - 2025-06-26
 
 ### Fixed

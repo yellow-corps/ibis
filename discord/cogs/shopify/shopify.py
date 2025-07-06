@@ -365,6 +365,15 @@ class Shopify(commands.Cog):
         thread = await self.find_or_open_thread("cancelled", order)
         await thread.send(await self.get_message("cancelled", order.order_name()))
 
+    async def add_thread_user(self, thread: discord.Thread, member: discord.Member):
+        try:
+            await thread.add_user(thread, member)
+        except Exception:
+            await thread.send(
+                f"-# Warning: Could not add `{member.name}` to thread. Can they see this channel? (Message removed in 60s)",
+                delete_after=60,
+            )
+
     async def find_or_open_thread(
         self, event: str, order: ShopifyOrder, *, emit_embed: bool = False
     ) -> discord.Thread:
@@ -398,12 +407,12 @@ class Shopify(commands.Cog):
 
         customer = order.customer()
         if customer:
-            await thread.add_user(customer)
+            await self.add_thread_user(thread, customer)
 
         for user in await self.get_staff():
             if isinstance(user, discord.Role):
                 for member in user.members:
-                    await thread.add_user(member)
+                    await self.add_thread_user(thread, member)
             else:
                 await thread.add_user(user)
 
