@@ -21,6 +21,11 @@ RUN sed -i -e \
   's/await send_to_owners_with_prefix_replaced(bot, outdated_red_message)/pass/' \
   "$(pip show Red-DiscordBot | grep "Location:" | awk '{print $2}')/redbot/core/_events.py"
 
+# rename invite command so we can alias invite to other things
+RUN sed -i -e \
+  's/async def invite\b/async def botinviteurl/' \
+  "$(pip show Red-DiscordBot | grep "Location:" | awk '{print $2}')/redbot/core/core_commands.py"
+
 COPY config/config.json /root/.config/Red-DiscordBot/config.json
 COPY local-share/data/ibis /root/.local/share/Red-DiscordBot/data/ibis
 COPY submodules/Trusty-cogs/extendedmodlog/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/extendedmodlog/
