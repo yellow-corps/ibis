@@ -145,7 +145,7 @@ class UniqueInvites(commands.Cog):
         self,
         ctx: commands.Context,
         channel: Union[discord.TextChannel, discord.ForumChannel],
-        amount: int,
+        amount: int = 1,
     ):
         """Create unique, non-expiring, single use invites for the specified channel"""
 

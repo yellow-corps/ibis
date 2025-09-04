@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Unique Invites `create` defaults to 1 invite
+- Core `invite` command renamed to `botinviteurl`
+
 ## [1.5.4] - 2025-07-06
 
 ### Fixed
