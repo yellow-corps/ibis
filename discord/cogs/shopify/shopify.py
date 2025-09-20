@@ -367,7 +367,7 @@ class Shopify(commands.Cog):
 
     async def add_thread_user(self, thread: discord.Thread, member: discord.Member):
         try:
-            await thread.add_user(thread, member)
+            await thread.add_user(member)
         except Exception:
             await thread.send(
                 f"-# Warning: Could not add `{member.name}` to thread. Can they see this channel? (Message removed in 60s)",
