@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- README instructions for configuring SOS Tickets
+## [1.6.2] - 2025-09-24
 
 ### Changed
 
 - Better handle exceptions around exporting SOS Ticket channels
+
+### Fixed
+
+- README instructions for configuring SOS Tickets
 
 ## [1.6.1] - 2025-09-20
 
@@ -139,7 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/yellow-corps/ibis/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/yellow-corps/ibis/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/yellow-corps/ibis/compare/v1.5.4...v1.6.0
 [1.5.4]: https://github.com/yellow-corps/ibis/compare/v1.5.3...v1.5.4
