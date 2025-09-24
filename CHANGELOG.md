@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Better handle exceptions around exporting SOS Ticket channels
+
 ## [1.6.1] - 2025-09-20
 
 ### Fixed

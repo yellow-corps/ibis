@@ -410,19 +410,27 @@ class SosTickets(commands.Cog):
 
         await channel.send(f"Attempting to export channel to {export_channel.mention}.")
 
-        html_file = await self.do_export(channel, bot, "html")
-        text_file = await self.do_export(channel, bot, "text")
+        try:
+            html_file = await self.do_export(channel, bot, "html")
+            text_file = await self.do_export(channel, bot, "text")
 
-        await export_channel.send(
-            f"Exported ticket `#{channel.name}`.", files=[html_file, text_file]
-        )
+            await export_channel.send(
+                f"Exported ticket `#{channel.name}`.", files=[html_file, text_file]
+            )
+        except Exception as ex:
+            await channel.send(
+                "Attempted to export channel but an error occurred. Will not export or prune."
+            )
+            raise ex
 
     async def prune_channel(self, channel: discord.TextChannel):
         if await self.get_export_auto_prune(channel.guild):
             try:
                 await channel.delete(reason="auto prune enabled")
             except Exception as ex:
-                await channel.send("Attempted to prune channel but an error occurred.")
+                await channel.send(
+                    "Attempted to prune channel but an error occurred. Will not prune."
+                )
                 raise ex
 
     @sostickets.command(name="resolve")
