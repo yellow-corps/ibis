@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Remove linux/arm64 docker container (it's just taking waaaay too long!)
+
 ## [1.6.2] - 2025-09-24
 
 ### Changed
