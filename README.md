@@ -219,13 +219,13 @@ Allows users to create emergency tickets using text channels.
 It's rather involved, so you may want to explore how to best configure it for your needs. At a high level, you'll likely want to run these commands:
 
 ```
-[@] sostickets channel name <name>
-[@] sostickets category active <active category>
-[@] sostickets category archive <archive category>
-[@] sostickets export channel <export channel>
+[@] sostickets channel "<name>"
+[@] sostickets category active "<active category>"
+[@] sostickets category archive "<archive category>"
+[@] sostickets export set #<export channel>
 [@] sostickets export auto_prune True
 [@] sostickets responders add @<Responders>
-[@] sostickets responders enable
+[@] sostickets enable
 ```
 
 ## 7. Create Unique Invites
