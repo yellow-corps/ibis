@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2025-10-06
+
 ### Changed
 
 - Catch and log exceptions thrown when calling bot in Shopify container
@@ -151,7 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/yellow-corps/ibis/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/yellow-corps/ibis/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/yellow-corps/ibis/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/yellow-corps/ibis/compare/v1.6.0...v1.6.1
