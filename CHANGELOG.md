@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Catch and log exceptions thrown when calling bot in Shopify container
+
 ## [1.7.0] - 2025-09-24
 
 ### Removed

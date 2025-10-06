@@ -79,7 +79,12 @@ const defaultHandler: WebhookHandler = {
   deliveryMethod: DeliveryMethod.Http,
   callbackUrl: shopify.config.webhooks.path,
   async callback(topic, shop, body) {
-    await callBot(topic, shop, body);
+    try {
+      await callBot(topic, shop, body);
+    } catch (error) {
+      console.error("[ibis-shopify/ERROR]", error);
+      throw error;
+    }
   }
 };
 
@@ -87,7 +92,7 @@ const webhookHandlers: WebhookHandlersParam = {
   ORDERS_CREATE: defaultHandler,
   ORDERS_UPDATED: defaultHandler,
   ORDERS_FULFILLED: defaultHandler,
-  ORDERS_CANCELLED: defaultHandler,
+  ORDERS_CANCELLED: defaultHandler
 };
 
 const app = express();
