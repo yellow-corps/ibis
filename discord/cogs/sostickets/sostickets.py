@@ -424,21 +424,26 @@ class SosTickets(commands.Cog):
             raise ex
 
     async def prune_channel(self, channel: discord.TextChannel):
-        if await self.get_export_auto_prune(channel.guild):
-            try:
-                await channel.delete(reason="auto prune enabled")
-            except Exception as ex:
-                await channel.send(
-                    "Attempted to prune channel but an error occurred. Will not prune."
-                )
-                raise ex
+        try:
+            await channel.delete(reason="pruning SOS ticket")
+        except Exception as ex:
+            await channel.send(
+                "Attempted to prune channel but an error occurred. Will not prune."
+            )
+            raise ex
 
     @sostickets.command(name="resolve")
     async def sostickets_resolve(self, ctx: commands.Context):
-        """Mark an SOS ticket as resolved, archiving it."""
+        """Mark an SOS ticket as resolved, archiving it, and auto-pruning it if enabled."""
         if not await self.is_active_channel(ctx.channel):
             return await self.reply_fail(
                 ctx.message, "This is not an active SOS tickets channel."
+            )
+
+
+        if not await self.is_active_category(ctx.channel.category):
+            return await self.reply_fail(
+                ctx.message, "This SOS ticket is not located in the active SOS tickets category."
             )
 
         await ctx.channel.move(
@@ -448,5 +453,23 @@ class SosTickets(commands.Cog):
             reason="ticket resolved",
         )
         await self.reply_success(ctx.message, "Channel archived.")
+
+        if await self.get_export_auto_prune(ctx.channel.guild):
+            await self.export_channel(ctx.channel, ctx.bot)
+            await self.prune_channel(ctx.channel)
+
+    @sostickets.command(name="prune")
+    async def sostickets_prune(self, ctx: commands.Context):
+        """Prune a resolved and archived SOS ticket"""
+        if not await self.is_active_channel(ctx.channel):
+            return await self.reply_fail(
+                ctx.message, "This is not an active SOS tickets channel."
+            )
+
+        if not await self.is_archive_category(ctx.channel.category):
+            return await self.reply_fail(
+                ctx.message, "This SOS ticket is not located in the archive SOS tickets category."
+            )
+
         await self.export_channel(ctx.channel, ctx.bot)
         await self.prune_channel(ctx.channel)

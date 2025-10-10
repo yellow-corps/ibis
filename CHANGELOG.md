@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A prune command to the SOS Tickets cog
+
+### Changed
+
+- Changed SOS tickets resolve command to only work if in active category
+
 ## [1.7.3] - 2025-10-10
 
 ### Changed
