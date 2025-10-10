@@ -440,10 +440,10 @@ class SosTickets(commands.Cog):
                 ctx.message, "This is not an active SOS tickets channel."
             )
 
-
-        if not await self.is_active_category(ctx.channel.category):
+        if ctx.channel.category != await self.get_active_category(ctx.guild):
             return await self.reply_fail(
-                ctx.message, "This SOS ticket is not located in the active SOS tickets category."
+                ctx.message,
+                "This SOS ticket is not located in the active SOS tickets category.",
             )
 
         await ctx.channel.move(
@@ -466,9 +466,10 @@ class SosTickets(commands.Cog):
                 ctx.message, "This is not an active SOS tickets channel."
             )
 
-        if not await self.is_archive_category(ctx.channel.category):
+        if ctx.channel.category != await self.get_archive_category(ctx.guild):
             return await self.reply_fail(
-                ctx.message, "This SOS ticket is not located in the archive SOS tickets category."
+                ctx.message,
+                "This SOS ticket is not located in the archive SOS tickets category.",
             )
 
         await self.export_channel(ctx.channel, ctx.bot)

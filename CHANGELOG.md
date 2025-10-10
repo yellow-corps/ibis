@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug in SOS Tickets cog with resolve and prune commands
+
 ### Added
 
 - Aliases resolve and prune for SOS Tickets cog
