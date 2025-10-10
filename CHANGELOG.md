@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Shopify container no longer waits for Shopify cog response
+- Naive Shopify fulfill delay extended to 30s
 
 ### Fixed
 

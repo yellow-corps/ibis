@@ -360,7 +360,7 @@ class Shopify(commands.Cog):
 
     async def orders_fulfilled(self, order: ShopifyOrder):
         # naive attempt to prevent race conditions with created events
-        await asyncio.sleep(10)
+        await asyncio.sleep(30)
         thread = await self.find_or_open_thread("fulfilled", order)
         await thread.send(await self.get_message("fulfilled", order.order_name()))
 
