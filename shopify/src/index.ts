@@ -83,8 +83,7 @@ const defaultHandler: WebhookHandler = {
       await callBot(topic, shop, body);
     } catch (error) {
       console.error(
-        "[ibis-shopify/ERROR]",
-        error.stacktrace ?? error.stack ?? error
+        "[ibis-shopify/ERROR]", error.stack ?? error
       );
       throw error;
     }
