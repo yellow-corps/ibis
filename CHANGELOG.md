@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.5] - 2025-10-10
+
+### Added
+
+- Aliases resolve and prune for SOS Tickets cog
+
 ### Changed
 
 - Shopify container no longer waits for Shopify cog response
@@ -15,10 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Bug in SOS Tickets cog with resolve and prune commands
-
-### Added
-
-- Aliases resolve and prune for SOS Tickets cog
 
 ## [1.7.4] - 2025-10-10
 
@@ -192,7 +194,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.7.4...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.7.5...HEAD
+[1.7.5]: https://github.com/yellow-corps/ibis/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/yellow-corps/ibis/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/yellow-corps/ibis/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/yellow-corps/ibis/compare/v1.7.1...v1.7.2
