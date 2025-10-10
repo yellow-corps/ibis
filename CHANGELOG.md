@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Aliases resolve and prune for SOS Tickets cog
+
 ## [1.7.4] - 2025-10-10
 
 ### Added

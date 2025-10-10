@@ -9,6 +9,20 @@
           "creator": null,
           "guild": null,
           "uses": 0
+        },
+        {
+          "name": "resolve",
+          "command": "sostickets resolve",
+          "creator": null,
+          "guild": null,
+          "uses": 0
+        },
+        {
+          "name": "prune",
+          "command": "sostickets prune",
+          "creator": null,
+          "guild": null,
+          "uses": 0
         }
       ]
     }
