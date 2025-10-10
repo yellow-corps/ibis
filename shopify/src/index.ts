@@ -15,7 +15,7 @@ const shopify = shopifyApp({
     apiKey: process.env.SHOPIFY_CLIENT_ID,
     apiSecretKey: process.env.SHOPIFY_CLIENT_SECRET,
     scopes: ["read_orders"],
-    apiVersion: LATEST_API_VERSION
+    apiVersion: LATEST_API_VERSION,
   },
   auth: {
     path: "/api/auth",
@@ -61,7 +61,7 @@ async function callBot(topic: string, shop: string, body: string) {
       ws.close();
     };
 
-    // five second timeout
+    // 60 second timeout
     const timeoutId = setTimeout(() => {
       if (ws.readyState !== ws.CLOSED) {
         reject("Timeout Error: 60 seconds timeout reached.");
