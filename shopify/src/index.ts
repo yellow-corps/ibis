@@ -57,7 +57,7 @@ async function callBot(topic: string, shop: string, body: string) {
     };
 
     ws.onerror = (error) => {
-      reject(`WebSocket Error: {error}`);
+      reject(`WebSocket Error: ${error}`);
       ws.close();
     };
 
@@ -82,7 +82,7 @@ const defaultHandler: WebhookHandler = {
     try {
       await callBot(topic, shop, body);
     } catch (error) {
-      console.error("[ibis-shopify/ERROR]", error);
+      console.error("[ibis-shopify/ERROR]", error.stacktrace ?? error.stack ?? error);
       throw error;
     }
   }
