@@ -15,7 +15,7 @@ const shopify = shopifyApp({
     apiKey: process.env.SHOPIFY_CLIENT_ID,
     apiSecretKey: process.env.SHOPIFY_CLIENT_SECRET,
     scopes: ["read_orders"],
-    apiVersion: LATEST_API_VERSION,
+    apiVersion: LATEST_API_VERSION
   },
   auth: {
     path: "/api/auth",
@@ -79,14 +79,9 @@ const defaultHandler: WebhookHandler = {
   deliveryMethod: DeliveryMethod.Http,
   callbackUrl: shopify.config.webhooks.path,
   async callback(topic, shop, body) {
-    try {
-      await callBot(topic, shop, body);
-    } catch (error) {
-      console.error(
-        "[ibis-shopify/ERROR]", error.stack ?? error
-      );
-      throw error;
-    }
+    callBot(topic, shop, body).catch((error) => {
+      console.error("[ibis-shopify/ERROR]", error.stack ?? error);
+    });
   }
 };
 
