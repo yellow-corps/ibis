@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Delay fulfill events by 10s in naive attempt to address race condition with create events
+
 ## [1.7.2] - 2025-10-10
 
 ### Changed

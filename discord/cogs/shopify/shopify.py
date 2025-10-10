@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Union, Literal
+import asyncio
 import re
 from redbot.core import commands, Config
 import discord
@@ -358,6 +359,8 @@ class Shopify(commands.Cog):
         await thread.send(await self.get_message("updated", order.order_name()))
 
     async def orders_fulfilled(self, order: ShopifyOrder):
+        # naive attempt to prevent race conditions with created events
+        await asyncio.sleep(10)
         thread = await self.find_or_open_thread("fulfilled", order)
         await thread.send(await self.get_message("fulfilled", order.order_name()))
 
