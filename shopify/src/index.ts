@@ -64,10 +64,10 @@ async function callBot(topic: string, shop: string, body: string) {
     // five second timeout
     const timeoutId = setTimeout(() => {
       if (ws.readyState !== ws.CLOSED) {
-        reject("Timeout Error: 5 seconds timeout reached.");
+        reject("Timeout Error: 60 seconds timeout reached.");
         ws.close();
       }
-    }, 5000);
+    }, 60 * 1000);
 
     ws.onclose = () => {
       clearTimeout(timeoutId);
@@ -82,7 +82,10 @@ const defaultHandler: WebhookHandler = {
     try {
       await callBot(topic, shop, body);
     } catch (error) {
-      console.error("[ibis-shopify/ERROR]", error.stacktrace ?? error.stack ?? error);
+      console.error(
+        "[ibis-shopify/ERROR]",
+        error.stacktrace ?? error.stack ?? error
+      );
       throw error;
     }
   }
