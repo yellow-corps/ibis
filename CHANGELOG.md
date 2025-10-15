@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2025-10-15
+
 ### Added
 
 - A backup cog, which invokes `redbot-setup backup` and uploads it
@@ -198,7 +200,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.7.5...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/yellow-corps/ibis/compare/v1.7.5...v1.8.0
 [1.7.5]: https://github.com/yellow-corps/ibis/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/yellow-corps/ibis/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/yellow-corps/ibis/compare/v1.7.2...v1.7.3
