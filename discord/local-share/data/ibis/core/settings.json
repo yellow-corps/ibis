@@ -10,6 +10,7 @@
       "regional_format": "en-AU",
       "packages": [
         "alias",
+        "backup",
         "cleanup",
         "csvmembers",
         "extendedmodlog",
@@ -28,6 +29,7 @@
         }
       },
       "Alias": { "8927348724": {} },
+      "Backup": { "401864250600270244": {} },
       "Cleanup": { "8927348724": {} },
       "CsvMembers": { "778440330267960653": {} },
       "ExtendedModLog": { "154457677895": {} },

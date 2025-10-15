@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A backup cog, which invokes `redbot-setup backup` and uploads it
+
 ## [1.7.5] - 2025-10-10
 
 ### Added

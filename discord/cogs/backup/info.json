@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "Backup",
+  "short": "Outputs a backup of the bot's configuration",
+  "requirements": [],
+  "description": "Outputs a backup of the bot's configuration",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}
