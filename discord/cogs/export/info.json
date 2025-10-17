@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "Export",
+  "short": "Exports Discord channels and messages",
+  "requirements": [],
+  "description": "Exports Discord channels and messages",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}

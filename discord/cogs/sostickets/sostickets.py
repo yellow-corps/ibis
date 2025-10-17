@@ -1,9 +1,7 @@
 import re
 from functools import reduce
 from typing import Union
-from io import BytesIO
 from redbot.core import commands, Config
-from aiohttp import ClientSession
 import discord
 import ibis
 
@@ -378,24 +376,7 @@ class SosTickets(commands.Cog):
             )
 
         await self.set_responders(ctx.guild, new_responders)
-        await self.reply_success(ctx.message)
-
-    async def do_export(
-        self, channel: discord.TextChannel, bot: commands.Bot, file_format: str
-    ) -> discord.File:
-        file_ext = "zip" if file_format == "html" else "txt"
-        url = f"http://localhost:8081/channel/{channel.id}/{file_ext}?botName={bot.user.name}"
-        print(f"GET {url}")
-        async with ClientSession() as session:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    raise SosTicketsException(
-                        f"Attempted to export channel, but got a {response.status} HTTP status."
-                    )
-                return discord.File(
-                    fp=BytesIO(await response.read()),
-                    filename=f"{channel.name}.{file_format}.{file_ext}",
-                )
+        await ibis.reply.success(ctx.message)
 
     async def export_channel(self, channel: discord.TextChannel, bot: commands.Bot):
         export_channel = await self.get_export_channel(channel.guild)
@@ -405,8 +386,16 @@ class SosTickets(commands.Cog):
         await channel.send(f"Attempting to export channel to {export_channel.mention}.")
 
         try:
-            html_file = await self.do_export(channel, bot, "html")
-            text_file = await self.do_export(channel, bot, "text")
+            html_file = await ibis.export.channel(
+                channel,
+                "html",
+                bot=bot,
+            )
+            text_file = await ibis.export.channel(
+                channel,
+                "text",
+                bot=bot,
+            )
 
             await export_channel.send(
                 f"Exported ticket `#{channel.name}`.", files=[html_file, text_file]
