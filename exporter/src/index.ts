@@ -28,6 +28,8 @@ async function extractChannel(
     format,
     "--output",
     output,
+    "--include-threads",
+    "all",
     ...(botName ? ["--filter", `~from:${botName}`] : []),
     ...(format === "HtmlDark" ? ["--media"] : [])
   ];
@@ -41,17 +43,32 @@ async function extractChannel(
     }
   });
 
-  if (process.error) {
-    throw process.error;
-  }
-
-  if (process.status !== 0) {
-    throw new Error("Non-zero status code returned by exporter.");
-  }
-
   const commandInput = "$ " + [command, ...args].join(" ") + "\n";
 
   console.log(commandInput + process.stdout);
+
+  if (process.error ?? process.stderr) {
+    console.error(process.error ?? process.stderr);
+  }
+
+  if (process.status !== 0) {
+    throw new Error(
+      `Non-zero status code returned by exporter: ${process.status}.`
+    );
+  }
+}
+
+async function createTextFile(folder: string): Promise<string> {
+  const textFile = `${folder}.txt`;
+  const contents = [];
+
+  for (const file of await fs.readdir(folder)) {
+    contents.push(await fs.readFile(`${folder}/${file}`, "utf-8"));
+  }
+
+  await fs.writeFile(textFile, contents.join("\n"));
+
+  return textFile;
 }
 
 async function createZipFile(folder: string): Promise<string> {
@@ -81,12 +98,13 @@ const app = express();
 app.get<{ channelId: string }, {}, {}, { botName?: string }>(
   "/channel/:channelId/txt",
   async (req, res) => {
-    const textFile = path.join("/tmp", `${crypto.randomUUID()}.txt`);
+    const tempFolder = path.join("/tmp", crypto.randomUUID());
+    await fs.mkdir(tempFolder, { recursive: true });
 
     try {
       extractChannel(
         req.params.channelId,
-        textFile,
+        tempFolder,
         "PlainText",
         req.query.botName,
         <string>req.headers.tz
@@ -95,11 +113,20 @@ app.get<{ channelId: string }, {}, {}, { botName?: string }>(
       return res.status(400).send(err);
     }
 
+    let textFile: string;
+    try {
+      textFile = await createTextFile(tempFolder);
+    } catch (err) {
+      console.log(`Error while collating text files: ${err}`);
+      return res.status(500).send(err);
+    }
+
     return res.download(textFile, (err) => {
       if (err) {
         console.log(`Error while downloading ${textFile}: ${err}`);
         res.status(500).send(err);
       }
+      fs.rm(tempFolder, { recursive: true, force: true });
       fs.rm(textFile, { force: true });
     });
   }

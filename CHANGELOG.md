@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extracted export functionality into an Export cog
 - Allow Shopify order tag to be configured
 
+### Fixed
+
+- Export container now exports threads
+
 ## [1.8.0] - 2025-10-15
 
 ### Added
