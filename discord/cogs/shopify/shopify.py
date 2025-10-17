@@ -152,6 +152,7 @@ class Shopify(commands.Cog):
                 "fulfilled": "{} was fulfilled.",
                 "cancelled": "{} was cancelled.",
             },
+            "tag_name": None,
             "staff": [],
         }
 
@@ -186,14 +187,11 @@ class Shopify(commands.Cog):
     async def set_staff(self, users: list[Union[discord.User, discord.Role]]):
         await self.config.staff.set([u.id for u in users])
 
-    async def reply_success(self, message: discord.Message, reply: str = None):
-        if reply:
-            await message.reply(reply)
-        await message.add_reaction("✅")
+    async def get_tag_name(self) -> str:
+        return await self.config.tag_name()
 
-    async def reply_fail(self, message: discord.Message, reply: str):
-        await message.reply(reply)
-        await message.add_reaction("❌")
+    async def set_tag_name(self, tag_name: str):
+        await self.config.tag_name.set(tag_name)
 
     @commands.group()
     @commands.is_owner()
@@ -218,6 +216,21 @@ class Shopify(commands.Cog):
             await ibis.reply.success(
                 ctx.message,
                 "Channel updated. Staff members were cleared, so make sure to `shopify staff add <staff>` staff members again.",
+            )
+
+    @shopify.command(name="tag")
+    async def shopify_tag(self, ctx: commands.Context, tag_name: str):
+        """Globally get or set the tag name to apply."""
+        if not tag_name:
+            await ibis.reply.success(
+                ctx.message,
+                f'Shopify tag currently set to "{(await self.get_tag_name())}"',
+            )
+        else:
+            await self.set_tag_name(tag_name)
+            await ibis.reply.success(
+                ctx.message,
+                f'Tag updated, will look for the tag named "{tag_name}" to apply to Shopify orders.',
             )
 
     @shopify.command(name="message")
@@ -395,8 +408,14 @@ class Shopify(commands.Cog):
                 )
                 await thread.send(embed=ShopifyUtils.build_embed(event, order))
             else:
-                applicable_tags = filter(
-                    lambda t: t.name.lower() == "order", channel.available_tags
+                tag_name = await self.get_tag_name()
+                applicable_tags = (
+                    filter(
+                        lambda t: t.name.lower() == tag_name,
+                        channel.available_tags,
+                    )
+                    if tag_name
+                    else []
                 )
                 thread = (
                     await channel.create_thread(

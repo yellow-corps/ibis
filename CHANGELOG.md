@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Extracted common functionality into an ibis package
 - Extracted export functionality into an Export cog
+- Allow Shopify order tag to be configured
 
 ## [1.8.0] - 2025-10-15
 
