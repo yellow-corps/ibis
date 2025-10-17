@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.1] - 2025-10-17
+
 ### Fixed
 
 - Bug in export utility when interpreting timezone
@@ -221,7 +223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/yellow-corps/ibis/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/yellow-corps/ibis/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/yellow-corps/ibis/compare/v1.7.5...v1.8.0
 [1.7.5]: https://github.com/yellow-corps/ibis/compare/v1.7.4...v1.7.5
