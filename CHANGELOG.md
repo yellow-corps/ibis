@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A timezone cog, for controlling the timezone for exporting
+- Roles to CSV Members cog export
 
 ### Changed
 

@@ -30,11 +30,7 @@ class CsvMembers(commands.Cog):
         fp = StringIO()
         writer = csv.writer(fp)
         writer.writerow(
-            [
-                "Username",
-                "Guild Display Name",
-                "Display Name (If Different)",
-            ]
+            ["Username", "Guild Display Name", "Display Name (If Different)", "Roles"]
         )
         for member in guild.members:
             writer.writerow(
@@ -45,6 +41,11 @@ class CsvMembers(commands.Cog):
                         member.global_name
                         if not member.display_name == member.global_name
                         else ""
+                    ),
+                    " ".join(
+                        f"@{role.name}"
+                        for role in member.roles
+                        if role.name != "@everyone"
                     ),
                 ]
             )
