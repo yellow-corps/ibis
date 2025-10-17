@@ -1,6 +1,7 @@
 from io import BytesIO
 from aiohttp import ClientSession
 from redbot.core import commands, Config
+from zoneinfo import ZoneInfo
 import discord
 
 
@@ -36,9 +37,12 @@ async def channel(
     if bot:
         params["botName"] = bot.user.name
 
-    timezone = await config().timezone()
-    if timezone:
-        headers["tz"] = timezone.key
+    try:
+        timezone_str = await config().timezone()
+        if timezone_str:
+            headers["tz"] = ZoneInfo(timezone_str).key
+    except:
+        pass
 
     async with ClientSession("http://localhost:8081") as session:
         async with session.get(
