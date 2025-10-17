@@ -1,10 +1,8 @@
 from os import unlink
-
 from redbot.core import commands, Config
 import discord
-
-from datetime import datetime
 from redbot.core.utils._internal_utils import create_backup
+import ibis
 
 
 class BackupCog(commands.Cog):
@@ -18,15 +16,19 @@ class BackupCog(commands.Cog):
     async def backup(self, ctx: commands.Context):
         "Outputs a backup of the bot's configuration"
 
-        try:
-            date = datetime.now().strftime("%Y%m%d%H%M%S")
+        async with ctx.typing():
+            try:
+                disk_file = await create_backup()
 
-            disk_file = await create_backup()
+                with open(disk_file, "rb") as fp:
+                    discord_file = discord.File(
+                        fp=fp, filename=ibis.file.unique(".backup.tar.gz")
+                    )
 
-            with open(disk_file, "rb") as fp:
-                discord_file = discord.File(fp=fp, filename=f"{date}.backup.tar.gz")
-
-            await ctx.reply(file=discord_file)
-        finally:
-            if disk_file:
-                unlink(disk_file)
+                await ibis.reply.success(ctx.message, file=discord_file)
+            except Exception as ex:
+                await ibis.reply.fail(ctx.message, "Backup failed, please see log.")
+                raise ex
+            finally:
+                if disk_file:
+                    unlink(disk_file)

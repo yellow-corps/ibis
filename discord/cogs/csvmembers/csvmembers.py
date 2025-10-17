@@ -1,10 +1,8 @@
 from io import StringIO
-
 from redbot.core import commands, Config
 import discord
-
-from datetime import datetime
 import csv
+import ibis
 
 
 class CsvMembers(commands.Cog):
@@ -18,11 +16,17 @@ class CsvMembers(commands.Cog):
     async def csvmembers(self, ctx: commands.Context):
         "Generate a CSV of all members in the server"
 
-        csv_file = self.build_csv(ctx.guild)
-        await ctx.reply(file=csv_file)
+        async with ctx.typing():
+            try:
+                csv_file = self.build_csv(ctx.guild)
+                await ibis.reply.success(ctx.message, file=csv_file)
+            except Exception as ex:
+                await ibis.reply.fail(
+                    ctx.message, "Building member CSV failed, please see log."
+                )
+                raise ex
 
     def build_csv(self, guild: discord.Guild) -> discord.File:
-        date = datetime.now().strftime("%Y%m%d%H%M%S")
         fp = StringIO()
         writer = csv.writer(fp)
         writer.writerow(
@@ -46,4 +50,4 @@ class CsvMembers(commands.Cog):
             )
 
         fp.seek(0)
-        return discord.File(fp=fp, filename=f"{date}.members.csv")
+        return discord.File(fp=fp, filename=ibis.file.unique("members.csv"))

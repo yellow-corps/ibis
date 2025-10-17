@@ -4,6 +4,7 @@ import logging
 from redbot.core import commands, Config, data_manager
 import duckdb
 import discord
+import ibis
 
 _log = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class PersistMessages(commands.Cog):
         self.db.sql(
             """
             CREATE TABLE IF NOT EXISTS messages (
-              id BIGINT PRIMARY KEY, 
+              id BIGINT PRIMARY KEY,
               data JSON
             );
             """
@@ -82,10 +83,12 @@ class PersistMessages(commands.Cog):
         """Enable or disable the PersistMessages cog to actually monitor"""
         if enabled is None:
             enabled = "enabled" if await self.get_enabled() else "disabled"
-            await ctx.reply(f"PersistMessages is currently {enabled}")
+            await ibis.reply.success(
+                ctx.message, f"PersistMessages is currently {enabled}"
+            )
         else:
             await self.set_enabled(enabled)
-        await ctx.message.add_reaction("✅")
+            await ibis.reply.success(ctx.message)
 
     def store_message(self, data: discord.Message):
         try:

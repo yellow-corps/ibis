@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A timezone cog, for controlling the timezone for exporting
 
+### Changed
+
+- Extracted common functionality into an ibis package
+
 ## [1.8.0] - 2025-10-15
 
 ### Added

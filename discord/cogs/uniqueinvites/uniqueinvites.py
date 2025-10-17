@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from io import StringIO
 from typing import Union
-
 from redbot.core import commands, Config
 from redbot.core.utils import predicates
 import discord
 from discord.ext import tasks
+import ibis
 
 
 class InviteHandler(ABC):
@@ -38,7 +38,7 @@ class InviteHandler(ABC):
         self.process.stop()
         await self.ctx.message.remove_reaction("⏳", self.ctx.me)
         if successful:
-            await self.ctx.message.add_reaction("✅")
+            await ibis.reply.success(self.ctx.message)
         await self.flush()
         self.finish_callback()
 
@@ -51,8 +51,9 @@ class InviteHandler(ABC):
             async with self.ctx.typing():
                 await self.loop()
         except Exception as ex:
-            await self.ctx.reply("An error occurred while processing invites.")
-            await self.ctx.message.add_reaction("❌")
+            await ibis.reply.fail(
+                self.ctx.message, "An error occurred while processing invites."
+            )
             await self.stop()
             raise ex
 
@@ -126,15 +127,6 @@ class UniqueInvites(commands.Cog):
 
         self.handler = None
 
-    async def reply_success(self, message: discord.Message, reply: str = None):
-        if reply:
-            await message.reply(reply)
-        await message.add_reaction("✅")
-
-    async def reply_fail(self, message: discord.Message, reply: str):
-        await message.reply(reply)
-        await message.add_reaction("❌")
-
     @commands.group()
     @commands.admin()
     async def uniqueinvites(self, ctx: commands.Context):
@@ -150,12 +142,12 @@ class UniqueInvites(commands.Cog):
         """Create unique, non-expiring, single use invites for the specified channel"""
 
         if amount <= 0:
-            await ctx.reply_fail(
+            await ibis.reply.fail(
                 ctx.message, "Must specify a positive amount of invites to create"
             )
 
         if amount > 1000:
-            await ctx.reply_fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "For everyone's sanity, you must specify an amount of invites less than or equal "
                 + "to 1000",
@@ -165,7 +157,7 @@ class UniqueInvites(commands.Cog):
             self.handler = InviteCreator(ctx, channel, amount, self.finish_callback)
             await self.handler.start()
         else:
-            await ctx.reply_fail(
+            await ibis.reply.fail(
                 ctx.message, "Already in the process of handling invites, please wait."
             )
 
@@ -184,7 +176,7 @@ class UniqueInvites(commands.Cog):
         )
 
         if len(invites) == 0:
-            return await self.reply_fail(
+            return await ibis.reply.fail(
                 ctx.message, f"No invites to revoke for {channel.mention}"
             )
 
@@ -198,7 +190,7 @@ class UniqueInvites(commands.Cog):
             self.handler = InviteRevoker(ctx, channel, invites, self.finish_callback)
             await self.handler.start()
         else:
-            await self.reply_fail(
+            await ibis.reply.fail(
                 ctx.message, "Already in the process of handling invites, please wait."
             )
 
@@ -207,9 +199,9 @@ class UniqueInvites(commands.Cog):
         """Stops an ongoing invite process and outputs the current invites generated"""
         if self.handler:
             await self.handler.stop()
-            await self.reply_success(ctx.message, "Stopped process")
+            await ibis.reply.success(ctx.message, "Stopped process")
         else:
-            await self.reply_fail(ctx.message, "Not running an invite process")
+            await ibis.reply.fail(ctx.message, "Not running an invite process")
 
     def finish_callback(self):
         self.handler = None
