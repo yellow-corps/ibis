@@ -1,0 +1,9 @@
+{
+  "author": ["Yellow Corps"],
+  "name": "TimeZone",
+  "short": "Controls the timezone for other cogs",
+  "requirements": [],
+  "description": "Controls the timezone for other cogs",
+  "permissions": [],
+  "end_user_data_statement": "This cog does not store any End User Data."
+}

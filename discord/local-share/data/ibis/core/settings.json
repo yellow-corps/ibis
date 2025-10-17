@@ -15,8 +15,10 @@
         "csvmembers",
         "extendedmodlog",
         "msgmover",
-        "uniqueinvites",
-        "shopify"
+        "shopify",
+        "sostickets",
+        "timezone",
+        "uniqueinvites"
       ]
     },
     "CUSTOM_GROUPS": {
@@ -35,8 +37,9 @@
       "ExtendedModLog": { "154457677895": {} },
       "Msgmover": { "806715409318936616": {} },
       "PersistMessages": { "931967579004876408": {} },
-      "SosTickets": { "249419295041331774": {} },
       "Shopify": { "410722909754055635": {} },
+      "SosTickets": { "249419295041331774": {} },
+      "TimeZone": { "863117321820307876": {} },
       "UniqueInvites": { "278581805461420503": {} }
     }
   }

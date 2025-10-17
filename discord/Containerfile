@@ -30,11 +30,17 @@ COPY config/config.json /root/.config/Red-DiscordBot/config.json
 COPY local-share/data/ibis /root/.local/share/Red-DiscordBot/data/ibis
 COPY submodules/Trusty-cogs/extendedmodlog/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/extendedmodlog/
 COPY submodules/coffee-cogs/msgmover/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/msgmover/
+
+# ibis shared code
+COPY ibis/ /usr/local/lib/python3.11/site-packages/ibis/
+
+# cogs
 COPY cogs/backup/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/backup/
 COPY cogs/csvmembers/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/csvmembers/
 COPY cogs/persistmessages/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/persistmessages/
 COPY cogs/shopify/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/shopify/
 COPY cogs/sostickets/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/sostickets/
+COPY cogs/timezone/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/timezone/
 COPY cogs/uniqueinvites/ /root/.local/share/Red-DiscordBot/data/ibis/cogs/CogManager/cogs/uniqueinvites/
 
 CMD ["redbot", "ibis", "--rpc", "--team-developers-are-owners", "--mentionable", "--prefix", "[@]"]

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A timezone cog, for controlling the timezone for exporting
+
 ## [1.8.0] - 2025-10-15
 
 ### Added

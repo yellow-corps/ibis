@@ -16,7 +16,8 @@ async function extractChannel(
   channelId: string,
   output: string,
   format: "HtmlDark" | "PlainText",
-  botName: string
+  botName: string,
+  timezone: string
 ): Promise<void> {
   const command = "/opt/app/DiscordChatExporter.Cli";
   const args = [
@@ -33,7 +34,11 @@ async function extractChannel(
 
   const process = spawnSync(command, args, {
     encoding: "utf-8",
-    env: { DISCORD_TOKEN: RED_TOKEN, FUCK_RUSSIA: "true" }
+    env: {
+      ...(timezone ? { TZ: timezone } : null),
+      DISCORD_TOKEN: RED_TOKEN,
+      FUCK_RUSSIA: "true"
+    }
   });
 
   if (process.error) {
@@ -83,7 +88,8 @@ app.get<{ channelId: string }, {}, {}, { botName?: string }>(
         req.params.channelId,
         textFile,
         "PlainText",
-        req.query.botName
+        req.query.botName,
+        <string>req.headers.tz
       );
     } catch (err) {
       return res.status(400).send(err);
@@ -110,7 +116,8 @@ app.get<{ channelId: string }, {}, {}, { botName?: string }>(
         req.params.channelId,
         tempFolder,
         "HtmlDark",
-        req.query.botName
+        req.query.botName,
+        <string>req.headers.tz
       );
     } catch (err) {
       return res.status(400).send(err);
