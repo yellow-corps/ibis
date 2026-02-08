@@ -13,37 +13,10 @@ services:
     volumes:
       - type: volume
         source: discord-config
-        target: /root/.config/Red-DiscordBot
+        target: /home/discord/.config/Red-DiscordBot
       - type: volume
-        source: discord-core-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/core
-      - type: volume
-        source: discord-alias-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Alias
-      - type: volume
-        source: discord-cleanup-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Cleanup
-      - type: volume
-        source: discord-extendedmodlog-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/ExtendedModLog
-      - type: volume
-        source: discord-modlog-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/ModLog
-      - type: volume
-        source: discord-msgmover-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Msgmover
-      - type: volume
-        source: discord-persistmessages-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/PersistMessages
-      - type: volume
-        source: discord-shopify-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/Shopify
-      - type: volume
-        source: discord-sostickets-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/SosTickets
-      - type: volume
-        source: discord-uniqueinvites-settings
-        target: /root/.local/share/Red-DiscordBot/data/ibis/cogs/UniqueInvites
+        source: discord-data
+        target: /home/discord/.local/share/Red-DiscordBot/data
     ports:
       - "8080:8080"
 
@@ -71,7 +44,7 @@ services:
       NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
     command:
       - http
-      - "--domain=${NGROK_DOMAIN}"
+      - "--url=${NGROK_DOMAIN}"
       - "http://discord:8080"
     depends_on:
       - shopify
@@ -91,13 +64,4 @@ services:
 
 volumes:
   discord-config:
-  discord-core-settings:
-  discord-alias-settings:
-  discord-cleanup-settings:
-  discord-extendedmodlog-settings:
-  discord-modlog-settings:
-  discord-msgmover-settings:
-  discord-persistmessages-settings:
-  discord-shopify-settings:
-  discord-sostickets-settings:
-  discord-uniqueinvites-settings:
+  discord-data:

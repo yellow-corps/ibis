@@ -1,4 +1,4 @@
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /builder
 
@@ -10,11 +10,18 @@ COPY src/index.ts ./src/
 
 RUN npm run build && npm install --omit dev
 
-FROM node:22-alpine
+FROM node:24-alpine
 
-LABEL org.opencontainers.image.source=https://github.com/yellow-corps/ibis
-LABEL org.opencontainers.image.description="ibis shopify webhook receiver"
-LABEL org.opencontainers.image.licenses=MIT
+LABEL \
+  org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
+  org.opencontainers.image.description="ibis shopify webhook receiver" \
+  org.opencontainers.image.licenses=MIT
+
+RUN \
+  addgroup -S shopify && \
+  adduser -S shopify -G shopify
+
+USER shopify
 
 COPY --from=builder /builder/target/index.mjs ./
 COPY --from=builder /builder/node_modules ./node_modules

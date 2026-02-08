@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Volumes required for `discord` container have changed.
+  - Gone are the many `discord-*-settings` volumes.
+  - They are replaced with a singular `discord-data` volume.
+  - Upgrading to this release will likely result in data/configuration loss. Apologies.
+
+### Security
+
+- Containers are now rootless where possible.
+- Updated various dependencies.
+
 ## [1.9.1] - 2025-10-17
 
 ### Fixed

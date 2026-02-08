@@ -1,25 +1,32 @@
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /builder
 
-COPY package.json package-lock.json ./
+COPY ./package.json ./package-lock.json ./
 
 RUN npm ci
 
-COPY src/ ./src/
+COPY ./src/ ./src/
 
 RUN npm run build && npm install --omit dev
 
 FROM tyrrrz/discordchatexporter
 
-LABEL org.opencontainers.image.source=https://github.com/yellow-corps/ibis
-LABEL org.opencontainers.image.description="ibis discord chat exporter"
-LABEL org.opencontainers.image.licenses=MIT
+LABEL \
+  org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
+  org.opencontainers.image.description="ibis discord chat exporter" \
+  org.opencontainers.image.licenses=MIT
 
-RUN apk add "nodejs=~22"
+RUN \
+  apk add --no-cache "nodejs=~24" && \
+  addgroup -S shopify && \
+  adduser -S shopify -G shopify
+
+USER shopify
 
 COPY --from=builder /builder/target/index.mjs ./
 COPY --from=builder /builder/node_modules ./node_modules
+# restore docker-entrypoint.sh
 COPY --from=builder /usr/local/bin/docker-entrypoint.sh /opt/app/docker-entrypoint.sh
 
 STOPSIGNAL SIGKILL
