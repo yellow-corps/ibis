@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-02-13
+
 ### Changed
 
 - Volumes required for `discord` container have changed.
@@ -235,7 +237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/yellow-corps/ibis/compare/v1.9.1...v2.0.0
 [1.9.1]: https://github.com/yellow-corps/ibis/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/yellow-corps/ibis/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/yellow-corps/ibis/compare/v1.7.5...v1.8.0
