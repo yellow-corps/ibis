@@ -122,7 +122,7 @@ class ShopifyUtils:
         return f"{short_timestamp}, {relative_timestamp}"
 
     @staticmethod
-    def build_embed(event: str, order: ShopifyOrder):
+    def build_embed(event: str, order: ShopifyOrder) -> discord.Embed:
         embed = discord.Embed(
             title=f"{order.order_name()} {event}",
             description=order.products(),
@@ -271,34 +271,38 @@ class Shopify(commands.Cog):
         """Globally add staff to being added to order threads."""
         channel = await self.get_channel()
         if not channel:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "Please set the channel first using `shopify channel <channel>`",
             )
+            return
 
         guild = channel.guild
 
         if not staff:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "No staff provided or I cannot see any of the members/roles you mentioned.",
             )
+            return
 
         for user in staff:
             if user.guild != guild:
-                return await ibis.reply.fail(
+                await ibis.reply.fail(
                     ctx.message,
                     "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
                 )
+                return
 
         current_staff = await self.get_staff()
         new_staff = list(set(current_staff + staff))
 
         if current_staff == new_staff:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "All of the members/roles provided were already marked as staff.",
             )
+            return
 
         await self.set_staff(new_staff)
         await ibis.reply.success(ctx.message)
@@ -312,33 +316,37 @@ class Shopify(commands.Cog):
         """Globally remove staff from being added to order threads."""
         channel = await self.get_channel()
         if not await self.get_channel():
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "Please set the channel first using `shopify channel <channel>`",
             )
+            return
 
         guild = channel.guild
 
         if not staff:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "No staff provided, or I cannot see any of the members/roles you mentioned.",
             )
+            return
 
         for user in staff:
             if user.guild != guild:
-                return await ibis.reply.fail(
+                await ibis.reply.fail(
                     ctx.message,
                     "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
                 )
+                return
 
         current_staff = await self.get_staff()
         new_staff = list(set(current_staff) - set(staff))
 
         if current_staff == new_staff:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message, "None of the members/roles provided were marked as staff."
             )
+            return
 
         await self.set_staff(new_staff)
         await ibis.reply.success(ctx.message)

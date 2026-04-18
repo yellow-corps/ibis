@@ -120,9 +120,7 @@ class SosTicketsModal(discord.ui.Modal, title=""):
             ephemeral=True,
         )
 
-    async def on_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
+    async def on_error(self, interaction: discord.Interaction, error: Exception):
         await interaction.response.send_message(
             "Something went wrong and your submission was not received. Please try again.",
             ephemeral=True,

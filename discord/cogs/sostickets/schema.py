@@ -125,7 +125,7 @@ class PromptsConfig:
     prompts: list[Prompt] = field(default_factory=list)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Prompt":
+    def from_dict(cls, data: dict[str, Any]) -> "PromptsConfig":
         PromptsConfig.validate(data)
         prompts = [Prompt.from_dict(id, data) for id, data in data["prompts"].items()]
         return cls(prompts=prompts)

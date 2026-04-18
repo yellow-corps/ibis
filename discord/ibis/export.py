@@ -7,7 +7,11 @@ import discord
 __internal_config: Config = None
 
 
-def config():
+class ExportException(Exception):
+    pass
+
+
+def config() -> Config:
     global __internal_config
     if not __internal_config:
         __internal_config = Config.get_conf(
@@ -22,7 +26,7 @@ def config():
     return __internal_config
 
 
-async def channel(channel: discord.TextChannel, file_format: str) -> discord.File:
+async def channel(target: discord.TextChannel, file_format: str) -> discord.File:
     file_ext = "zip" if file_format == "html" else "txt"
 
     headers = {}
@@ -31,12 +35,13 @@ async def channel(channel: discord.TextChannel, file_format: str) -> discord.Fil
         timezone_str = await config().timezone()
         if timezone_str:
             headers["tz"] = ZoneInfo(timezone_str).key
-    except:
+    except Exception:
+        # if failed to get timezone, just continue
         pass
 
     async with ClientSession("http://localhost:8081") as session:
         async with session.get(
-            f"/channel/{channel.id}/{file_ext}", headers=headers
+            f"/channel/{target.id}/{file_ext}", headers=headers
         ) as response:
             if response.status != 200:
                 raise ExportException(
@@ -44,5 +49,5 @@ async def channel(channel: discord.TextChannel, file_format: str) -> discord.Fil
                 )
             return discord.File(
                 fp=BytesIO(await response.read()),
-                filename=f"{channel.name}.{file_format}.{file_ext}",
+                filename=f"{target.name}.{file_format}.{file_ext}",
             )

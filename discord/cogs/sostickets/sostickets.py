@@ -49,14 +49,14 @@ class SosTickets(commands.Cog):
     async def set_channel_name(self, guild: discord.Guild, name: str):
         await self.config.guild(guild).channel.name.set(name)
 
-    async def is_active_channel(self, channel: discord.TextChannel):
+    async def is_active_channel(self, channel: discord.TextChannel) -> bool:
         name = await self.get_channel_name(channel.guild)
         if not channel.name.startswith(name):
             return False
         name_regex = re.compile(f"^{re.escape(name)}-\\d+$")
         return name_regex.match(channel.name)
 
-    async def is_start_channel(self, channel: discord.TextChannel):
+    async def is_start_channel(self, channel: discord.TextChannel) -> bool:
         return channel.name == await self.get_channel_name(channel.guild)
 
     async def get_channel_next_no(self, guild: discord.Guild) -> int:
@@ -223,10 +223,12 @@ class SosTickets(commands.Cog):
             or not await self.get_active_category(ctx.guild)
             or not await self.get_archive_category(ctx.guild)
         ):
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "Must set up channel name, active category, and archive category first.",
             )
+            return
+
         try:
             await self.create_start_channel(ctx.guild)
         except Exception as ex:
@@ -251,7 +253,7 @@ class SosTickets(commands.Cog):
     async def disable_if_enabled(self, message: discord.Message):
         if await self.get_enabled(message.guild):
             await self.set_enabled(message.guild, False)
-            return await message.reply(
+            await message.reply(
                 " ".join(
                     [
                         "SOS Tickets disabled as configuration was changed.",
@@ -372,19 +374,21 @@ class SosTickets(commands.Cog):
     ):
         """Add responders for SOS tickets."""
         if not users:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "No responders provided or I cannot see any of the users you mentioned.",
             )
+            return
 
         current_responders = await self.get_responders(ctx.guild)
         new_responders = list(set(current_responders + users))
 
         if current_responders == new_responders:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "All of the users provided were already marked as responders.",
             )
+            return
 
         await self.set_responders(ctx.guild, new_responders)
         await ibis.reply.success(ctx.message)
@@ -397,18 +401,20 @@ class SosTickets(commands.Cog):
     ):
         """Remove responders for SOS tickets."""
         if not users:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "No users provided or I cannot see any of the users you mentioned.",
             )
+            return
 
         current_responders = await self.get_responders(ctx.guild)
         new_responders = list(set(current_responders) - set(users))
 
         if current_responders == new_responders:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message, "None of the users provided were marked as responders."
             )
+            return
 
         await self.set_responders(ctx.guild, new_responders)
         await ibis.reply.success(ctx.message)
@@ -510,15 +516,17 @@ class SosTickets(commands.Cog):
     async def sostickets_resolve(self, ctx: commands.Context):
         """Mark an SOS ticket as resolved, archiving it, and auto-pruning it if enabled."""
         if not await self.is_active_channel(ctx.channel):
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message, "This is not an active SOS tickets channel."
             )
+            return
 
         if ctx.channel.category != await self.get_active_category(ctx.guild):
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "This SOS ticket is not located in the active SOS tickets category.",
             )
+            return
 
         async with ctx.typing():
             await ctx.channel.move(
@@ -538,15 +546,17 @@ class SosTickets(commands.Cog):
     async def sostickets_prune(self, ctx: commands.Context):
         """Prune a resolved and archived SOS ticket"""
         if not await self.is_active_channel(ctx.channel):
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message, "This is not an active SOS tickets channel."
             )
+            return
 
         if ctx.channel.category != await self.get_archive_category(ctx.guild):
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message,
                 "This SOS ticket is not located in the archive SOS tickets category.",
             )
+            return
 
         async with ctx.typing():
             await self.export_channel(ctx.channel)
