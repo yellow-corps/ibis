@@ -84,11 +84,11 @@ class PersistMessages(commands.Cog):
         if enabled is None:
             enabled = "enabled" if await self.get_enabled() else "disabled"
             await ibis.reply.success(
-                ctx.message, f"PersistMessages is currently {enabled}"
+                ctx, f"PersistMessages is currently {enabled}"
             )
         else:
             await self.set_enabled(enabled)
-            await ibis.reply.success(ctx.message)
+            await ibis.reply.success(ctx)
 
     def store_message(self, data: discord.Message):
         try:

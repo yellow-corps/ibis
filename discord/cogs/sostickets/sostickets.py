@@ -224,7 +224,7 @@ class SosTickets(commands.Cog):
             or not await self.get_archive_category(ctx.guild)
         ):
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "Must set up channel name, active category, and archive category first.",
             )
             return
@@ -233,21 +233,21 @@ class SosTickets(commands.Cog):
             await self.create_start_channel(ctx.guild)
         except Exception as ex:
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 f"Could not create #{await self.get_channel_name(ctx.guild)} channel.",
             )
             raise ex
 
         await self.rescan_next_no(ctx.guild)
         await self.set_channel_next_no(ctx.guild, True)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets.command(name="disable")
     async def sostickets_disable(self, ctx: commands.Context):
         """Disable SOS tickets from running in this server."""
         await self.set_enabled(ctx.guild, False)
         await ibis.reply.success(
-            ctx.message, "You may want to delete the existing SOS tickets channel."
+            ctx, "You may want to delete the existing SOS tickets channel."
         )
 
     async def disable_if_enabled(self, message: discord.Message):
@@ -267,11 +267,11 @@ class SosTickets(commands.Cog):
         """Get or set the SOS ticket channel to use."""
         if not channel:
             channel = await self.get_channel_name(ctx.guild) or "<no channel>"
-            await ibis.reply.success(ctx.message, f"Current SOS channel: {channel}")
+            await ibis.reply.success(ctx, f"Current SOS channel: {channel}")
         else:
             await self.set_channel_name(ctx.guild, channel)
-            await ibis.reply.success(ctx.message)
-            await self.disable_if_enabled(ctx.message)
+            await ibis.reply.success(ctx)
+            await self.disable_if_enabled(ctx)
 
     @sostickets.group(name="category")
     async def sostickets_category(self, ctx: commands.Context):
@@ -284,12 +284,10 @@ class SosTickets(commands.Cog):
         """Gets or sets the active SOS category"""
         if not category:
             category = await self.get_active_category(ctx.guild) or "<no category>"
-            await ibis.reply.success(
-                ctx.message, f"The active SOS category is: {category}"
-            )
+            await ibis.reply.success(ctx, f"The active SOS category is: {category}")
         else:
             await self.set_active_category(ctx.guild, category)
-            await ibis.reply.success(ctx.message)
+            await ibis.reply.success(ctx)
             await self.disable_if_enabled(ctx.message)
 
     @sostickets_category.command(name="archive")
@@ -299,12 +297,10 @@ class SosTickets(commands.Cog):
         """Gets or sets the archive SOS category"""
         if not category:
             category = await self.get_archive_category(ctx.guild) or "<no category>"
-            await ibis.reply.success(
-                ctx.message, f"The archive SOS category is: {category}"
-            )
+            await ibis.reply.success(ctx, f"The archive SOS category is: {category}")
         else:
             await self.set_archive_category(ctx.guild, category)
-            await ibis.reply.success(ctx.message)
+            await ibis.reply.success(ctx)
             await self.disable_if_enabled(ctx.message)
 
     @sostickets.group(name="export", autohelp=False)
@@ -315,7 +311,7 @@ class SosTickets(commands.Cog):
             channel = channel.mention if channel else "<no channel>"
             auto_prune = await self.get_export_auto_prune(ctx.guild)
             await ibis.reply.success(
-                ctx.message,
+                ctx,
                 f"Current export channel: {channel}, auto pruning: {auto_prune}",
             )
 
@@ -325,13 +321,13 @@ class SosTickets(commands.Cog):
     ):
         """Set the channel to export SOS tickets to."""
         await self.set_export_channel(ctx.guild, channel)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets_export.command(name="clear")
     async def sostickets_export_clear(self, ctx: commands.Context):
         """Clear the channel to export SOS tickets to."""
         await self.set_export_channel(ctx.guild, None)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets_export.command(name="auto_prune")
     async def sostickets_export_auto_prune(
@@ -339,7 +335,7 @@ class SosTickets(commands.Cog):
     ):
         """Enable or disable auto pruning of SOS tickets when they're resolved."""
         await self.set_export_auto_prune(ctx.guild, auto_prune)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets.command(name="motd")
     async def sostickets_motd(
@@ -350,11 +346,11 @@ class SosTickets(commands.Cog):
     ):
         """Get or set the "Message Of The Day" to repost into the SOS ticket channel."""
         if not content:
-            await ibis.reply.success(ctx.message, "Current motd for the SOS channel:")
+            await ibis.reply.success(ctx, "Current motd for the SOS channel:")
             await ctx.reply(await self.get_motd(ctx.guild) or "<no motd>")
         else:
             await self.set_motd(ctx.guild, content)
-            await ibis.reply.success(ctx.message)
+            await ibis.reply.success(ctx)
 
     @sostickets.group(name="responders", autohelp=False)
     async def sostickets_responders(self, ctx: commands.Context):
@@ -364,7 +360,7 @@ class SosTickets(commands.Cog):
                 ", ".join(u.mention for u in await self.get_responders(ctx.guild))
                 or "<no responders>"
             )
-            await ibis.reply.success(ctx.message, f"Current responders: {users}")
+            await ibis.reply.success(ctx, f"Current responders: {users}")
 
     @sostickets_responders.command(name="add")
     async def sostickets_responders_add(
@@ -375,7 +371,7 @@ class SosTickets(commands.Cog):
         """Add responders for SOS tickets."""
         if not users:
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "No responders provided or I cannot see any of the users you mentioned.",
             )
             return
@@ -385,13 +381,13 @@ class SosTickets(commands.Cog):
 
         if current_responders == new_responders:
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "All of the users provided were already marked as responders.",
             )
             return
 
         await self.set_responders(ctx.guild, new_responders)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets_responders.command(name="remove")
     async def sostickets_responders_remove(
@@ -402,7 +398,7 @@ class SosTickets(commands.Cog):
         """Remove responders for SOS tickets."""
         if not users:
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "No users provided or I cannot see any of the users you mentioned.",
             )
             return
@@ -412,12 +408,12 @@ class SosTickets(commands.Cog):
 
         if current_responders == new_responders:
             await ibis.reply.fail(
-                ctx.message, "None of the users provided were marked as responders."
+                ctx, "None of the users provided were marked as responders."
             )
             return
 
         await self.set_responders(ctx.guild, new_responders)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
 
     @sostickets.group("prompts-config")
     async def sostickets_prompts_config(self, ctx: commands.Context):
@@ -516,14 +512,12 @@ class SosTickets(commands.Cog):
     async def sostickets_resolve(self, ctx: commands.Context):
         """Mark an SOS ticket as resolved, archiving it, and auto-pruning it if enabled."""
         if not await self.is_active_channel(ctx.channel):
-            await ibis.reply.fail(
-                ctx.message, "This is not an active SOS tickets channel."
-            )
+            await ibis.reply.fail(ctx, "This is not an active SOS tickets channel.")
             return
 
         if ctx.channel.category != await self.get_active_category(ctx.guild):
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "This SOS ticket is not located in the active SOS tickets category.",
             )
             return
@@ -535,7 +529,7 @@ class SosTickets(commands.Cog):
                 end=True,
                 reason="ticket resolved",
             )
-            await ibis.reply.success(ctx.message, "Channel archived.")
+            await ibis.reply.success(ctx, "Channel archived.")
 
         if await self.get_export_auto_prune(ctx.channel.guild):
             async with ctx.typing():
@@ -546,14 +540,12 @@ class SosTickets(commands.Cog):
     async def sostickets_prune(self, ctx: commands.Context):
         """Prune a resolved and archived SOS ticket"""
         if not await self.is_active_channel(ctx.channel):
-            await ibis.reply.fail(
-                ctx.message, "This is not an active SOS tickets channel."
-            )
+            await ibis.reply.fail(ctx, "This is not an active SOS tickets channel.")
             return
 
         if ctx.channel.category != await self.get_archive_category(ctx.guild):
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "This SOS ticket is not located in the archive SOS tickets category.",
             )
             return

@@ -19,10 +19,10 @@ class CsvMembers(commands.Cog):
         async with ctx.typing():
             try:
                 csv_file = self.build_csv(ctx.guild)
-                await ibis.reply.success(ctx.message, file=csv_file)
+                await ibis.reply.success(ctx, file=csv_file)
             except Exception as ex:
                 await ibis.reply.fail(
-                    ctx.message, "Building member CSV failed, please see log."
+                    ctx, "Building member CSV failed, please see log."
                 )
                 raise ex
 

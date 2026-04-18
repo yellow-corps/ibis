@@ -23,10 +23,8 @@ class TimeZoneCog(commands.Cog):
         "Get or set the timezone to use"
 
         if not timezone:
-            await ibis.reply.success(
-                ctx.message, f"Timezone: {(await self.get_timezone())}"
-            )
+            await ibis.reply.success(ctx, f"Timezone: {(await self.get_timezone())}")
             return
 
         await self.set_timezone(timezone)
-        await ibis.reply.success(ctx.message)
+        await ibis.reply.success(ctx)
