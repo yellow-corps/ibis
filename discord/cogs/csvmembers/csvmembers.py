@@ -2,10 +2,10 @@ from io import StringIO
 from redbot.core import commands, Config
 import discord
 import csv
-import ibis
+import ibis.reply
 
 
-class CsvMembers(commands.Cog):
+class CsvMembersCog(commands.Cog):
     def __init__(self):
         self.config = Config.get_conf(
             self, identifier=778440330267960653, force_registration=True

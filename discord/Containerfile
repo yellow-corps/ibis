@@ -1,11 +1,14 @@
 FROM python:3.11-alpine
 
+ARG WITH_OTEL
+
 LABEL \
   org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
-  org.opencontainers.image.description="ibis discord bot" \
+  org.opencontainers.image.description="ibis discord bot${WITH_OTEL:+ with otel}" \
   org.opencontainers.image.licenses=MIT
 
 ENV \
+  WITH_OTEL=$WITH_OTEL \
   PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1
 
@@ -13,38 +16,30 @@ RUN \
   addgroup -S discord && \
   adduser -S discord -G discord
 
-ARG DUCKDB_BUILD_DEPENDENCIES="g++ musl-dev linux-headers"
+ARG DUCKDB_BUILD_DEPENDENCIES="musl-dev linux-headers"
 RUN \
-  apk add --no-cache $DUCKDB_BUILD_DEPENDENCIES && \
+  apk add --no-cache g++ $DUCKDB_BUILD_DEPENDENCIES && \
   python -m pip install --upgrade pip
 
-USER discord
+USER discord  
 WORKDIR /home/discord
 
-COPY ./requirements.txt requirements.txt
+COPY --chown=discord ./requirements/ ./requirements/
 RUN \
+  export REQUIREMENTS_FILE=$( [[ -n "$WITH_OTEL" ]] && echo "main-otel.txt" || echo "main.txt" ) && \
   export PATH="$PATH:/home/discord/.local/bin" && \
-  python -m pip install --user -r requirements.txt && \
+  python -m pip install --user -r "requirements/$REQUIREMENTS_FILE" && \
   python -m pip cache purge && \
-  rm requirements.txt
+  rm -rf ./requirements/
 
 USER root
 RUN apk del $DUCKDB_BUILD_DEPENDENCIES 
 USER discord
 
+COPY ./patches.sh .
 RUN \
-  # disable startup version check DM - it's so annoying!!
-  sed -i -e \
-  's/await send_to_owners_with_prefix_replaced(bot, outdated_red_message)/pass/' \
-  "$(pip show Red-DiscordBot | grep "Location:" | awk '{print $2}')/redbot/core/_events.py" && \
-  # rename invite command so we can alias invite to other things
-  sed -i -e \
-  's/async def invite\b/async def botinviteurl/' \
-  "$(pip show Red-DiscordBot | grep "Location:" | awk '{print $2}')/redbot/core/core_commands.py" && \
-  # remove deprecated shutdown_timeout assignment
-  sed -i -e \
-  's/shutdown_timeout=120//' \
-  "$(pip show Red-DiscordBot | grep "Location:" | awk '{print $2}')/redbot/core/_rpc.py"
+  ./patches.sh && \
+  rm ./patches.sh
 
 COPY --chown=discord ./config/config.json .config/Red-DiscordBot/config.json
 COPY --chown=discord ./local-share/data/ibis .local/share/Red-DiscordBot/data/ibis
@@ -52,5 +47,8 @@ COPY --chown=discord ./submodules/Trusty-cogs/extendedmodlog/ .local/share/Red-D
 COPY --chown=discord ./submodules/coffee-cogs/msgmover/ .local/share/Red-DiscordBot/cogs/msgmover/
 COPY --chown=discord ./cogs/ .local/share/Red-DiscordBot/cogs/
 COPY ./ibis/ /usr/local/lib/python3.11/site-packages/ibis/
+COPY ./docker-entrypoint.sh .
 
-CMD ["python", ".local/bin/redbot", "ibis", "--rpc", "--team-developers-are-owners", "--mentionable", "--prefix", "[@]"]
+RUN [[ -z "$WITH_OTEL" ]] || .local/bin/opentelemetry-bootstrap --action=install
+
+ENTRYPOINT ["/bin/sh", "-c", "./docker-entrypoint.sh"]

@@ -2,9 +2,9 @@ from typing import Union
 import logging
 from redbot.core import commands, Config
 import discord
-import ibis
+import ibis.reply
 
-_log = logging.getLogger(__name__)
+logger = logging.getLogger("red.cogs.ibis.export")
 
 
 class ExportCog(commands.Cog):
@@ -33,9 +33,10 @@ class ExportCog(commands.Cog):
             except Exception as ex:
                 await ibis.reply.fail(
                     ctx,
-                    "Exporting channel as text failed (perhaps the export is larger than I can upload?), please see log.",
+                    "Exporting channel as text failed, please see log.\n"
+                    + "-# Perhaps the export is larger than I can upload?",
                 )
-                _log.warning("Exporting channel as text failed.", exc_info=ex)
+                logger.warning("Exporting channel as text failed.", exc_info=ex)
 
     @export.command(name="html")
     async def export_html(self, ctx: commands.Context, channel: discord.TextChannel):
@@ -48,6 +49,7 @@ class ExportCog(commands.Cog):
             except Exception as ex:
                 await ibis.reply.fail(
                     ctx,
-                    "Exporting channel as html failed (perhaps the export is larger than I can upload?), please see log.",
+                    "Exporting channel as html failed, please see log.\n"
+                    + "-# Perhaps the export is larger than I can upload?",
                 )
-                _log.warning("Exporting channel as html failed.", exc_info=ex)
+                logger.warning("Exporting channel as html failed.", exc_info=ex)

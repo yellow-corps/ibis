@@ -3,30 +3,36 @@ from zoneinfo import ZoneInfo
 from aiohttp import ClientSession
 from redbot.core import Config
 import discord
+from ibis.otel import start_span, add_span_attribute
 
-__internal_config: Config = None
+__INTERNAL_CONFIG: Config = None
 
 
 class ExportException(Exception):
     pass
 
 
-def config() -> Config:
-    global __internal_config
-    if not __internal_config:
-        __internal_config = Config.get_conf(
+def config():
+    # pylint: disable-next=global-statement
+    global __INTERNAL_CONFIG
+    if not __INTERNAL_CONFIG:
+        __INTERNAL_CONFIG = Config.get_conf(
             cog_instance=None,
             cog_name="TimeZone",
             identifier=863117321820307876,
             force_registration=True,
         )
         default_global = {"timezone": None}
-        __internal_config.register_global(**default_global)
+        __INTERNAL_CONFIG.register_global(**default_global)
 
-    return __internal_config
+    return __INTERNAL_CONFIG
 
 
+@start_span
 async def channel(target: discord.TextChannel, file_format: str) -> discord.File:
+    add_span_attribute("export.channel.id", target.id)
+    add_span_attribute("export.channel.id", target.name)
+    add_span_attribute("export.file_format", file_format)
     file_ext = "zip" if file_format == "html" else "txt"
 
     headers = {}

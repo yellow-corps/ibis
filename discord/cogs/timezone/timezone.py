@@ -1,7 +1,8 @@
 from typing import Union, Optional
 from zoneinfo import ZoneInfo
 from redbot.core import commands
-import ibis
+import ibis.export
+import ibis.reply
 
 
 class TimeZoneCog(commands.Cog):

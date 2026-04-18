@@ -6,7 +6,8 @@ from redbot.core import commands, Config
 import yaml
 from jsonschema import ValidationError
 import discord
-import ibis
+import ibis.reply
+import ibis.export
 from .modals import SosTicketsPrompt
 from .schema import PromptsConfig
 
@@ -15,7 +16,7 @@ class SosTicketsException(Exception):
     pass
 
 
-class SosTickets(commands.Cog):
+class SosTicketsCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.config = Config.get_conf(
             self, identifier=249419295041331774, force_registration=True

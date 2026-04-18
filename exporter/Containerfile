@@ -1,5 +1,7 @@
 FROM node:24-alpine AS builder
 
+ARG WITH_OTEL
+
 WORKDIR /builder
 
 COPY ./package.json ./package-lock.json ./
@@ -8,26 +10,30 @@ RUN npm ci
 
 COPY ./src/ ./src/
 
-RUN npm run build && npm install --omit dev
+RUN npm run build && npm install --omit=dev --omit=optional ${WITH_OTEL:+--include=optional}
 
 FROM tyrrrz/discordchatexporter:2.47.1
 
+ARG WITH_OTEL
+
 LABEL \
   org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
-  org.opencontainers.image.description="ibis discord chat exporter" \
+  org.opencontainers.image.description="ibis discord chat exporter${WITH_OTEL:+ with otel}" \
   org.opencontainers.image.licenses=MIT
+
+ENV WITH_OTEL=$WITH_OTEL
 
 RUN \
   apk add --no-cache "nodejs=~24" && \
-  addgroup -S shopify && \
-  adduser -S shopify -G shopify
+  addgroup -S exporter && \
+  adduser -S exporter -G exporter
 
-USER shopify
+USER exporter
+WORKDIR /home/exporter
 
 COPY --from=builder /builder/target/index.mjs ./
 COPY --from=builder /builder/node_modules ./node_modules
-# restore docker-entrypoint.sh
-COPY --from=builder /usr/local/bin/docker-entrypoint.sh /opt/app/docker-entrypoint.sh
+COPY ./docker-entrypoint.sh ./docker-entrypoint.sh
 
 STOPSIGNAL SIGKILL
-CMD ["node", "--trace-uncaught", "index.mjs"]
+ENTRYPOINT ["/bin/sh", "-c", "./docker-entrypoint.sh"]

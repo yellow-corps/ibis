@@ -6,7 +6,7 @@ from redbot.core import commands, Config
 from redbot.core.utils import predicates
 import discord
 from discord.ext import tasks
-import ibis
+import ibis.reply
 
 
 class InviteHandler(ABC):
@@ -120,7 +120,7 @@ class InviteRevoker(InviteHandler):
         await self.invites.pop().delete(reason="auto invite revocation")
 
 
-class UniqueInvites(commands.Cog):
+class UniqueInvitesCog(commands.Cog):
     def __init__(self):
         self.config = Config.get_conf(
             self, identifier=278581805461420503, force_registration=True

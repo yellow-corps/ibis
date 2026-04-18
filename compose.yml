@@ -7,9 +7,15 @@ services:
     build:
       context: ./discord
       dockerfile: ./Containerfile
+      args:
+        - WITH_OTEL=${WITH_OTEL+true}
+      sbom: true
+      provenance: true
     restart: unless-stopped
     environment:
       RED_TOKEN: "${RED_TOKEN}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${WITH_OTEL+http://grafana:4317}"
+      OTEL_SERVICE_NAME: discord
     volumes:
       - type: volume
         source: discord-config
@@ -28,10 +34,16 @@ services:
     build:
       context: ./shopify
       dockerfile: ./Containerfile
+      args:
+        - WITH_OTEL=${WITH_OTEL+true}
+      sbom: true
+      provenance: true
     restart: unless-stopped
     environment:
       SHOPIFY_CLIENT_ID: "${SHOPIFY_CLIENT_ID}"
       SHOPIFY_CLIENT_SECRET: "${SHOPIFY_CLIENT_SECRET}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${WITH_OTEL+http://grafana:4317}"
+      OTEL_SERVICE_NAME: shopify
     network_mode: "service:discord"
 
   ngrok:
@@ -57,11 +69,29 @@ services:
     build:
       context: ./exporter
       dockerfile: ./Containerfile
+      args:
+        - WITH_OTEL=${WITH_OTEL+true}
+      sbom: true
+      provenance: true
     restart: unless-stopped
     environment:
       RED_TOKEN: "${RED_TOKEN}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${WITH_OTEL+http://grafana:4317}"
+      OTEL_SERVICE_NAME: exporter
     network_mode: "service:discord"
+
+  grafana:
+    container_name: grafana
+    profiles:
+      - grafana
+    image: grafana/otel-lgtm:latest
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/data
+    ports:
+      - "3000:3000"
 
 volumes:
   discord-config:
   discord-data:
+  grafana-data:

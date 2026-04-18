@@ -13,12 +13,16 @@
   },
   "dependencies": {
     "archiver": "^7.0.1",
-    "express": "^4.22.1"
+    "express": "^5.2.1"
+  },
+  "optionalDependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.70.0"
   },
   "devDependencies": {
-    "@types/archiver": "^6.0.3",
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.14.14",
-    "esbuild": "^0.25.2"
+    "@types/archiver": "^7.0.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.3",
+    "esbuild": "^0.27.3"
   }
 }

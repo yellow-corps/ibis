@@ -4,7 +4,7 @@ import asyncio
 import re
 from redbot.core import commands, Config
 import discord
-import ibis
+import ibis.reply
 
 
 class ShopifyOrder:
@@ -134,7 +134,7 @@ class ShopifyUtils:
         return embed
 
 
-class Shopify(commands.Cog):
+class ShopifyCog(commands.Cog):
     bot: commands.Bot
 
     def __init__(self, bot: commands.Bot):
@@ -215,7 +215,8 @@ class Shopify(commands.Cog):
             await self.set_staff([])
             await ibis.reply.success(
                 ctx,
-                "Channel updated. Staff members were cleared, so make sure to `shopify staff add <staff>` staff members again.",
+                "Channel updated. Staff members were cleared, so make sure "
+                + "to `shopify staff add <staff>` staff members again.",
             )
 
     @shopify.command(name="tag")
@@ -230,7 +231,8 @@ class Shopify(commands.Cog):
             await self.set_tag_name(tag_name)
             await ibis.reply.success(
                 ctx,
-                f'Tag updated, will look for the tag named "{tag_name}" to apply to Shopify orders.',
+                f'Tag updated, will look for the tag named "{tag_name}"'
+                + " to apply to Shopify orders.",
             )
 
     @shopify.command(name="message")
@@ -290,7 +292,8 @@ class Shopify(commands.Cog):
             if user.guild != guild:
                 await ibis.reply.fail(
                     ctx,
-                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                    "One or more of the members/roles provided is not visible"
+                    + "from the server the shopify channel is in.",
                 )
                 return
 
@@ -335,7 +338,8 @@ class Shopify(commands.Cog):
             if user.guild != guild:
                 await ibis.reply.fail(
                     ctx,
-                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                    "One or more of the members/roles provided is not visible "
+                    + "from the server the shopify channel is in.",
                 )
                 return
 
@@ -395,7 +399,8 @@ class Shopify(commands.Cog):
             await thread.add_user(member)
         except Exception:
             await thread.send(
-                f"-# Warning: Could not add `{member.name}` to thread. Can they see this channel? (Message removed in 60s)",
+                f"-# Warning: Could not add `{member.name}` to thread. "
+                + "Can they see this channel? (Message removed in 60s)",
                 delete_after=60,
             )
 

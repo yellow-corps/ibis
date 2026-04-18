@@ -4,7 +4,7 @@ WORKDIR /builder
 
 COPY package.json package-lock.json ./
 
-RUN apk add --no-cache python3 py3-setuptools make g++ && npm ci
+RUN npm ci
 
 COPY src/index.ts ./src/
 
@@ -12,19 +12,25 @@ RUN npm run build && npm install --omit dev
 
 FROM node:24-alpine
 
+ARG WITH_OTEL
+
 LABEL \
   org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
-  org.opencontainers.image.description="ibis shopify webhook receiver" \
+  org.opencontainers.image.description="ibis shopify webhook receiver${WITH_OTEL:+ with otel}" \
   org.opencontainers.image.licenses=MIT
+
+ENV WITH_OTEL=$WITH_OTEL
 
 RUN \
   addgroup -S shopify && \
   adduser -S shopify -G shopify
 
 USER shopify
+WORKDIR /home/shopify
 
 COPY --from=builder /builder/target/index.mjs ./
 COPY --from=builder /builder/node_modules ./node_modules
+COPY ./docker-entrypoint.sh ./docker-entrypoint.sh
 
 STOPSIGNAL SIGKILL
-CMD ["node", "index.mjs"]
+ENTRYPOINT ["/bin/sh", "-c", "./docker-entrypoint.sh"]

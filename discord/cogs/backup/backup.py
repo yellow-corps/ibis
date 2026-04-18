@@ -1,8 +1,12 @@
 from os import unlink
+import logging
 from redbot.core import commands, Config
-import discord
 from redbot.core.utils._internal_utils import create_backup
-import ibis
+import discord
+import ibis.file
+import ibis.reply
+
+logger = logging.getLogger("red.cogs.ibis.backup")
 
 
 class BackupCog(commands.Cog):
@@ -10,6 +14,7 @@ class BackupCog(commands.Cog):
         self.config = Config.get_conf(
             self, identifier=401864250600270244, force_registration=True
         )
+        logger.info("setup backup cog")
 
     @commands.command()
     @commands.is_owner()
@@ -17,6 +22,7 @@ class BackupCog(commands.Cog):
         "Outputs a backup of the bot's configuration"
 
         async with ctx.typing():
+            disk_file = None
             try:
                 disk_file = await create_backup()
 
