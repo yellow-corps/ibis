@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- SOS Tickets can prompt users with a form for their tickets
+
 ### Changed
 
 - Fixed exporter container to be `tyrrrz/discordchatexporter:2.47.1`
