@@ -1,13 +1,21 @@
-import discord
+from redbot.core import commands
 
 
-async def success(message: discord.Message, reply: str = None, **kwargs):
+async def wait(ctx: commands.Context, reply: str = None, **kwargs):
     if reply or len(kwargs):
-        await message.reply(reply, **kwargs)
-    await message.add_reaction("✅")
+        await ctx.message.reply(reply, silent=True, **kwargs)
+    await ctx.message.add_reaction("⏳")
 
 
-async def fail(message: discord.Message, reply: str = None, **kwargs):
+async def success(ctx: commands.Context, reply: str = None, **kwargs):
     if reply or len(kwargs):
-        await message.reply(reply, **kwargs)
-    await message.add_reaction("❌")
+        await ctx.message.reply(reply, **kwargs)
+    await ctx.message.remove_reaction("⏳", ctx.me)
+    await ctx.message.add_reaction("✅")
+
+
+async def fail(ctx: commands.Context, reply: str = None, **kwargs):
+    if reply or len(kwargs):
+        await ctx.message.reply(reply, **kwargs)
+    await ctx.message.remove_reaction("⏳", ctx.me)
+    await ctx.message.add_reaction("❌")

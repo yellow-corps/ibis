@@ -38,7 +38,7 @@ class InviteHandler(ABC):
         self.process.stop()
         await self.ctx.message.remove_reaction("⏳", self.ctx.me)
         if successful:
-            await ibis.reply.success(self.ctx.message)
+            await ibis.reply.success(self.ctx)
         await self.flush()
         self.finish_callback()
 
@@ -53,7 +53,7 @@ class InviteHandler(ABC):
                 await self.loop()
         except Exception as ex:
             await ibis.reply.fail(
-                self.ctx.message, "An error occurred while processing invites."
+                self.ctx, "An error occurred while processing invites."
             )
             await self.stop()
             raise ex
@@ -144,12 +144,12 @@ class UniqueInvites(commands.Cog):
 
         if amount <= 0:
             await ibis.reply.fail(
-                ctx.message, "Must specify a positive amount of invites to create"
+                ctx, "Must specify a positive amount of invites to create"
             )
 
         if amount > 1000:
             await ibis.reply.fail(
-                ctx.message,
+                ctx,
                 "For everyone's sanity, you must specify an amount of invites less than or equal "
                 + "to 1000",
             )
@@ -159,7 +159,7 @@ class UniqueInvites(commands.Cog):
             await self.handler.start()
         else:
             await ibis.reply.fail(
-                ctx.message, "Already in the process of handling invites, please wait."
+                ctx, "Already in the process of handling invites, please wait."
             )
 
     @uniqueinvites.command()
@@ -177,9 +177,7 @@ class UniqueInvites(commands.Cog):
         )
 
         if len(invites) == 0:
-            await ibis.reply.fail(
-                ctx.message, f"No invites to revoke for {channel.mention}"
-            )
+            await ibis.reply.fail(ctx, f"No invites to revoke for {channel.mention}")
             return
 
         await ctx.reply(f"Revoke {len(invites)} invites from {channel.mention}?")
@@ -193,7 +191,7 @@ class UniqueInvites(commands.Cog):
             await self.handler.start()
         else:
             await ibis.reply.fail(
-                ctx.message, "Already in the process of handling invites, please wait."
+                ctx, "Already in the process of handling invites, please wait."
             )
 
     @uniqueinvites.command(name="stop")
@@ -201,9 +199,9 @@ class UniqueInvites(commands.Cog):
         """Stops an ongoing invite process and outputs the current invites generated"""
         if self.handler:
             await self.handler.stop()
-            await ibis.reply.success(ctx.message, "Stopped process")
+            await ibis.reply.success(ctx, "Stopped process")
         else:
-            await ibis.reply.fail(ctx.message, "Not running an invite process")
+            await ibis.reply.fail(ctx, "Not running an invite process")
 
     def finish_callback(self):
         self.handler = None

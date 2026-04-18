@@ -1,3 +1,4 @@
+from typing import Union
 import logging
 from redbot.core import commands, Config
 import discord
@@ -18,16 +19,20 @@ class ExportCog(commands.Cog):
         "Export a channel into text or HTML"
 
     @export.command(name="text")
-    async def export_text(self, ctx: commands.Context, channel: discord.TextChannel):
+    async def export_text(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.ForumChannel],
+    ):
         "Export a channel into text"
 
         async with ctx.typing():
             try:
                 text_file = await ibis.export.channel(channel, "text")
-                await ibis.reply.success(ctx.message, files=[text_file])
+                await ibis.reply.success(ctx, files=[text_file])
             except Exception as ex:
                 await ibis.reply.fail(
-                    ctx.message,
+                    ctx,
                     "Exporting channel as text failed (perhaps the export is larger than I can upload?), please see log.",
                 )
                 _log.warning("Exporting channel as text failed.", exc_info=ex)
@@ -39,10 +44,10 @@ class ExportCog(commands.Cog):
         async with ctx.typing():
             try:
                 html_file = await ibis.export.channel(channel, "html")
-                await ibis.reply.success(ctx.message, files=[html_file])
+                await ibis.reply.success(ctx, files=[html_file])
             except Exception as ex:
                 await ibis.reply.fail(
-                    ctx.message,
+                    ctx,
                     "Exporting channel as html failed (perhaps the export is larger than I can upload?), please see log.",
                 )
                 _log.warning("Exporting channel as html failed.", exc_info=ex)
