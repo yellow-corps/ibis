@@ -4,6 +4,7 @@ set -o errexit
 
 version="$1"
 
+npm ci
 npm version --no-git-tag-version --allow-same-version "$version"
 
 version="$(node -p "require('./package.json').version")"
