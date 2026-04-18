@@ -1,9 +1,14 @@
 import re
 from functools import reduce
 from typing import Union
+from io import StringIO
 from redbot.core import commands, Config
+import yaml
+from jsonschema import ValidationError
 import discord
 import ibis
+from .modals import SosTicketsPrompt
+from .schema import PromptsConfig
 
 
 class SosTicketsException(Exception):
@@ -11,10 +16,11 @@ class SosTicketsException(Exception):
 
 
 class SosTickets(commands.Cog):
-    def __init__(self):
+    def __init__(self, bot: commands.Bot):
         self.config = Config.get_conf(
             self, identifier=249419295041331774, force_registration=True
         )
+        self.bot = bot
 
         default_guild = {
             "enabled": False,
@@ -23,11 +29,13 @@ class SosTickets(commands.Cog):
             "export": {"channel": None, "auto_prune": False},
             "motd": None,
             "responders": [],
+            "prompts_config": "",
         }
 
         self.config.register_guild(**default_guild)
 
         self.handling_sos = False
+        self.current_prompts: dict[int, SosTicketsPrompt] = {}
 
     async def get_enabled(self, guild: discord.Guild) -> bool:
         return await self.config.guild(guild).enabled()
@@ -127,17 +135,28 @@ class SosTickets(commands.Cog):
     ):
         await self.config.guild(guild).responders.set([u.id for u in users])
 
+    async def get_prompts_config(self, guild: discord.Guild) -> dict:
+        return yaml.load(
+            await self.config.guild(guild).prompts_config(), Loader=yaml.Loader
+        )
+
+    async def set_prompts_config(self, guild: discord.Guild, config: dict):
+        await self.config.guild(guild).prompts_config.set(
+            yaml.dump(config, Dumper=yaml.Dumper)
+        )
+
     async def create_start_channel(self, guild: discord.Guild):
         name = await self.get_channel_name(guild)
         channel = await guild.create_text_channel(
             name=name,
             category=await self.get_active_category(guild),
             position=0,
-            reason="ticket created",
+            reason="SosTickets: recreating start channel",
         )
         motd = await self.get_motd(guild)
-        if motd:
-            await channel.send(content=motd, silent=True)
+        prompt = self.current_prompts.get(guild.id)
+        if motd or prompt:
+            await channel.send(content=motd, view=prompt, silent=True)
 
     async def use_start_channel(self, guild: discord.Guild):
         name = await self.get_channel_name(guild)
@@ -151,13 +170,27 @@ class SosTickets(commands.Cog):
         next_name = f"{name}-{next_no}"
 
         async with channel.typing():
-            await channel.edit(name=next_name, position=next_no, reason="moving ticket")
+            await channel.edit(
+                name=next_name,
+                position=next_no,
+                reason="SosTickets: creating new ticket",
+            )
             await self.set_channel_next_no(guild, next_no + 1)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        for guild in self.bot.guilds:
+            await self.apply_prompts_config(guild)
+
+    async def cog_load(self):
+        for guild in self.bot.guilds:
+            await self.apply_prompts_config(guild)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if (
             message.author.bot
+            or self.current_prompts.get(message.guild.id)
             or not isinstance(message.channel, discord.TextChannel)
             or not await self.is_start_channel(message.channel)
             or self.handling_sos
@@ -168,9 +201,11 @@ class SosTickets(commands.Cog):
         try:
             await self.use_start_channel(message.guild)
             await self.create_start_channel(message.guild)
-            await message.reply(
-                " ".join(u.mention for u in await self.get_responders(message.guild))
-            )
+            responders = await self.get_responders(message.guild)
+            if responders:
+                await message.reply(" ".join(u.mention for u in responders))
+            else:
+                await message.add_reaction("✅")
         finally:
             self.handling_sos = False
 
@@ -378,7 +413,65 @@ class SosTickets(commands.Cog):
         await self.set_responders(ctx.guild, new_responders)
         await ibis.reply.success(ctx.message)
 
-    async def export_channel(self, channel: discord.TextChannel, bot: commands.Bot):
+    @sostickets.group("prompts-config")
+    async def sostickets_prompts_config(self, ctx: commands.Context):
+        """Add or remove a prompts configuration for SOS tickets."""
+
+    @sostickets_prompts_config.command("get")
+    async def sostickets_prompts_config_get(self, ctx: commands.Context):
+        """View a current prompts configuration for SOS tickets."""
+
+        prompts_config = await self.get_prompts_config(ctx.guild)
+
+        if prompts_config:
+            file = discord.File(
+                fp=StringIO(yaml.dump(prompts_config, Dumper=yaml.Dumper)),
+                filename="prompts-config.yaml",
+            )
+            await ibis.reply.success(
+                ctx.message, "Current prompts config is attached", file=file
+            )
+        else:
+            await ibis.reply.success(
+                ctx.message, "No prompts config is defined currently"
+            )
+
+    @sostickets_prompts_config.command("set")
+    async def sostickets_prompts_config_set(self, ctx: commands.Context):
+        """Add a prompts configuration for SOS tickets."""
+        async with ctx.typing():
+            for attachment in ctx.message.attachments:
+                if attachment.filename.endswith(".yml") or attachment.filename.endswith(
+                    ".yaml"
+                ):
+                    try:
+                        config = yaml.load(await attachment.read(), Loader=yaml.Loader)
+                        PromptsConfig.validate(config)
+                        await self.set_prompts_config(ctx.guild, config)
+                    except yaml.YAMLError as exc:
+                        await ibis.reply.fail(
+                            ctx.message, f"Attachment did not contain valid YAML: {exc}"
+                        )
+                    except ValidationError as exc:
+                        await ibis.reply.fail(
+                            ctx.message,
+                            f"Attachment did not validate against expected YAML schema: {exc}",
+                        )
+                    await self.apply_prompts_config(ctx.guild)
+                    await ibis.reply.success(ctx.message)
+                    return
+        await ibis.reply.fail(
+            ctx.message,
+            "You must attach a `.yaml` file to your message to set the config",
+        )
+
+    @sostickets_prompts_config.command("clear")
+    async def sostickets_prompts_config_clear(self, ctx: commands.Context):
+        """Clear a prompts configuration for SOS tickets."""
+        await self.set_prompts_config(ctx.guild, {})
+        await self.apply_prompts_config(ctx.guild)
+
+    async def export_channel(self, channel: discord.TextChannel):
         export_channel = await self.get_export_channel(channel.guild)
         if not export_channel:
             return
@@ -458,3 +551,28 @@ class SosTickets(commands.Cog):
         async with ctx.typing():
             await self.export_channel(ctx.channel)
             await self.prune_channel(ctx.channel)
+
+    async def apply_prompts_config(self, guild: discord.Guild):
+        async def create_channel(
+            message: str, files: list[discord.File]
+        ) -> discord.Message:
+            name = await self.get_channel_name(guild)
+            next_no = await self.get_channel_next_no(guild)
+            next_name = f"{name}-{next_no}"
+
+            channel = await guild.create_text_channel(
+                name=next_name,
+                category=await self.get_active_category(guild),
+                position=next_no,
+                reason="SosTickets: creating new ticket",
+            )
+            message = await channel.send(content=message, files=files)
+            await self.set_channel_next_no(guild, next_no + 1)
+            return message
+
+        prompts_config = await self.get_prompts_config(guild)
+        self.current_prompts[guild.id] = (
+            SosTicketsPrompt(prompts_config, create_channel) if prompts_config else None
+        )
+        if self.current_prompts[guild.id]:
+            self.bot.add_view(self.current_prompts[guild.id])
