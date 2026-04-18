@@ -9,13 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- SOS Tickets can prompt users with a form for their tickets
+- SOS Tickets can prompt users with a form for their tickets.
 
 ### Changed
 
-- Fixed exporter container to be `tyrrrz/discordchatexporter:2.47.1`
-- Allow bot messages to be exported in SOS Ticket exports
-- Bump Red-DiscordBot to 3.5.24
+- Fixed exporter container to be `tyrrrz/discordchatexporter:2.47.1`.
+- Allow bot messages to be exported in SOS Ticket exports.
+- Bump Red-DiscordBot to 3.5.24.
+
+### Fixed
+
+- Re-add duckdb as a dependency for discord container.
 
 ## [2.0.0] - 2026-02-13
 
