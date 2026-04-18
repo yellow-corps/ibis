@@ -16,7 +16,6 @@ async function extractChannel(
   channelId: string,
   output: string,
   format: "HtmlDark" | "PlainText",
-  botName: string,
   timezone: string
 ): Promise<void> {
   const command = "/opt/app/DiscordChatExporter.Cli";
@@ -30,7 +29,6 @@ async function extractChannel(
     output,
     "--include-threads",
     "all",
-    ...(botName ? ["--filter", `~from:${botName}`] : []),
     ...(format === "HtmlDark" ? ["--media"] : [])
   ];
 
@@ -95,79 +93,71 @@ async function createZipFile(folder: string): Promise<string> {
 
 const app = express();
 
-app.get<{ channelId: string }, {}, {}, { botName?: string }>(
-  "/channel/:channelId/txt",
-  async (req, res) => {
-    const tempFolder = path.join("/tmp", crypto.randomUUID());
-    await fs.mkdir(tempFolder, { recursive: true });
+app.get<{ channelId: string }>("/channel/:channelId/txt", async (req, res) => {
+  const tempFolder = path.join("/tmp", crypto.randomUUID());
+  await fs.mkdir(tempFolder, { recursive: true });
 
-    try {
-      extractChannel(
-        req.params.channelId,
-        tempFolder,
-        "PlainText",
-        req.query.botName,
-        <string>req.headers.tz
-      );
-    } catch (err) {
-      return res.status(400).send(err);
-    }
-
-    let textFile: string;
-    try {
-      textFile = await createTextFile(tempFolder);
-    } catch (err) {
-      console.log(`Error while collating text files: ${err}`);
-      return res.status(500).send(err);
-    }
-
-    return res.download(textFile, (err) => {
-      if (err) {
-        console.log(`Error while downloading ${textFile}: ${err}`);
-        res.status(500).send(err);
-      }
-      fs.rm(tempFolder, { recursive: true, force: true });
-      fs.rm(textFile, { force: true });
-    });
+  try {
+    extractChannel(
+      req.params.channelId,
+      tempFolder,
+      "PlainText",
+      <string>req.headers.tz
+    );
+  } catch (err) {
+    return res.status(400).send(err);
   }
-);
 
-app.get<{ channelId: string }, {}, {}, { botName?: string }>(
-  "/channel/:channelId/zip",
-  async (req, res) => {
-    const tempFolder = path.join("/tmp", crypto.randomUUID());
-    await fs.mkdir(tempFolder, { recursive: true });
-
-    try {
-      extractChannel(
-        req.params.channelId,
-        tempFolder,
-        "HtmlDark",
-        req.query.botName,
-        <string>req.headers.tz
-      );
-    } catch (err) {
-      return res.status(400).send(err);
-    }
-
-    let zipFile: string;
-    try {
-      zipFile = await createZipFile(tempFolder);
-    } catch (err) {
-      console.log(`Error while zipping up files: ${err}`);
-      return res.status(500).send(err);
-    }
-
-    return res.download(zipFile, (err) => {
-      if (err) {
-        console.log(`Error while downloading ${zipFile}: ${err}`);
-        res.status(500).send(err);
-      }
-      fs.rm(tempFolder, { recursive: true, force: true });
-      fs.rm(zipFile, { force: true });
-    });
+  let textFile: string;
+  try {
+    textFile = await createTextFile(tempFolder);
+  } catch (err) {
+    console.log(`Error while collating text files: ${err}`);
+    return res.status(500).send(err);
   }
-);
+
+  return res.download(textFile, (err) => {
+    if (err) {
+      console.log(`Error while downloading ${textFile}: ${err}`);
+      res.status(500).send(err);
+    }
+    fs.rm(tempFolder, { recursive: true, force: true });
+    fs.rm(textFile, { force: true });
+  });
+});
+
+app.get<{ channelId: string }>("/channel/:channelId/zip", async (req, res) => {
+  const tempFolder = path.join("/tmp", crypto.randomUUID());
+  await fs.mkdir(tempFolder, { recursive: true });
+
+  try {
+    extractChannel(
+      req.params.channelId,
+      tempFolder,
+      "HtmlDark",
+      <string>req.headers.tz
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+
+  let zipFile: string;
+  try {
+    zipFile = await createZipFile(tempFolder);
+  } catch (err) {
+    console.log(`Error while zipping up files: ${err}`);
+    return res.status(500).send(err);
+  }
+
+  return res.download(zipFile, (err) => {
+    if (err) {
+      console.log(`Error while downloading ${zipFile}: ${err}`);
+      res.status(500).send(err);
+    }
+    fs.rm(tempFolder, { recursive: true, force: true });
+    fs.rm(zipFile, { force: true });
+  });
+});
 app.use(express.json());
 
 console.log("listening on port 8081");

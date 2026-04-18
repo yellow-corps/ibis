@@ -1,9 +1,8 @@
 from io import BytesIO
 from aiohttp import ClientSession
-from redbot.core import commands, Config
+from redbot.core import Config
 from zoneinfo import ZoneInfo
 import discord
-
 
 __internal_config: Config = None
 
@@ -23,19 +22,10 @@ def config():
     return __internal_config
 
 
-async def channel(
-    channel: discord.TextChannel,
-    file_format: str,
-    *,
-    bot: commands.Bot = None,
-) -> discord.File:
+async def channel(channel: discord.TextChannel, file_format: str) -> discord.File:
     file_ext = "zip" if file_format == "html" else "txt"
 
-    params = {}
     headers = {}
-
-    if bot:
-        params["botName"] = bot.user.name
 
     try:
         timezone_str = await config().timezone()
@@ -46,7 +36,7 @@ async def channel(
 
     async with ClientSession("http://localhost:8081") as session:
         async with session.get(
-            f"/channel/{channel.id}/{file_ext}", headers=headers, params=params
+            f"/channel/{channel.id}/{file_ext}", headers=headers
         ) as response:
             if response.status != 200:
                 raise ExportException(
