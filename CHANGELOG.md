@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Re-add duckdb as a dependency for discord container.
+- Fixed various code smells.
 
 ## [2.0.0] - 2026-02-13
 

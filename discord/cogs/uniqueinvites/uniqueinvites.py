@@ -45,7 +45,8 @@ class InviteHandler(ABC):
     @tasks.loop(seconds=1.0)
     async def process(self):
         if self.should_stop():
-            return await self.stop(True)
+            await self.stop(True)
+            return
 
         try:
             async with self.ctx.typing():
@@ -80,7 +81,7 @@ class InviteCreator(InviteHandler):
             file=file,
         )
 
-    def should_stop(self):
+    def should_stop(self) -> bool:
         return len(self.invites) >= self.amount
 
     async def loop(self):
@@ -112,7 +113,7 @@ class InviteRevoker(InviteHandler):
             f"{processed}/{self.amount} invites revoked for {self.channel.mention}"
         )
 
-    def should_stop(self):
+    def should_stop(self) -> bool:
         return len(self.invites) == 0
 
     async def loop(self):
@@ -176,9 +177,10 @@ class UniqueInvites(commands.Cog):
         )
 
         if len(invites) == 0:
-            return await ibis.reply.fail(
+            await ibis.reply.fail(
                 ctx.message, f"No invites to revoke for {channel.mention}"
             )
+            return
 
         await ctx.reply(f"Revoke {len(invites)} invites from {channel.mention}?")
         pred = predicates.MessagePredicate.yes_or_no(ctx)
