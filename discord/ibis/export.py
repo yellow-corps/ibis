@@ -1,7 +1,7 @@
 from io import BytesIO
+from zoneinfo import ZoneInfo
 from aiohttp import ClientSession
 from redbot.core import Config
-from zoneinfo import ZoneInfo
 import discord
 
 __internal_config: Config = None

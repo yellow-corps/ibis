@@ -25,9 +25,9 @@ class BackupCog(commands.Cog):
                         fp=fp, filename=ibis.file.unique(".backup.tar.gz")
                     )
 
-                await ibis.reply.success(ctx.message, file=discord_file)
+                await ibis.reply.success(ctx, file=discord_file)
             except Exception as ex:
-                await ibis.reply.fail(ctx.message, "Backup failed, please see log.")
+                await ibis.reply.fail(ctx, "Backup failed, please see log.")
                 raise ex
             finally:
                 if disk_file:
