@@ -389,12 +389,10 @@ class SosTickets(commands.Cog):
             html_file = await ibis.export.channel(
                 channel,
                 "html",
-                bot=bot,
             )
             text_file = await ibis.export.channel(
                 channel,
                 "text",
-                bot=bot,
             )
 
             await export_channel.send(
@@ -440,7 +438,7 @@ class SosTickets(commands.Cog):
 
         if await self.get_export_auto_prune(ctx.channel.guild):
             async with ctx.typing():
-                await self.export_channel(ctx.channel, ctx.bot)
+                await self.export_channel(ctx.channel)
                 await self.prune_channel(ctx.channel)
 
     @sostickets.command(name="prune")
@@ -458,5 +456,5 @@ class SosTickets(commands.Cog):
             )
 
         async with ctx.typing():
-            await self.export_channel(ctx.channel, ctx.bot)
+            await self.export_channel(ctx.channel)
             await self.prune_channel(ctx.channel)
