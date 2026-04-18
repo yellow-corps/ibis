@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fixed exporter container to be `tyrrrz/discordchatexporter:2.47.1`
+
 ## [2.0.0] - 2026-02-13
 
 ### Changed
