@@ -10,7 +10,7 @@ COPY ./src/ ./src/
 
 RUN npm run build && npm install --omit dev
 
-FROM tyrrrz/discordchatexporter
+FROM tyrrrz/discordchatexporter:2.47.1
 
 LABEL \
   org.opencontainers.image.source=https://github.com/yellow-corps/ibis \
