@@ -1,13 +1,4 @@
-# Red-DiscordBot
-wheel==0.46.3
-Red-DiscordBot==3.5.24
-
-# sostickets
-PyYAML==6.0.3
-jsonschema==4.26.0
-
-# persistmessages
-duckdb==1.4.4
+-r core.txt
 
 # coffee-cogs/msgmover
 requests==2.33.0

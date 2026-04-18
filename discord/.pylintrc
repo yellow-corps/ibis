@@ -1,0 +1,10 @@
+[MAIN]
+ignore-paths=submodules
+
+disable=
+  missing-module-docstring,
+  missing-function-docstring,
+  missing-class-docstring,
+  broad-exception-caught,
+  too-many-instance-attributes,
+  too-many-public-methods

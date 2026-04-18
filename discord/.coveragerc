@@ -1,0 +1,6 @@
+[run]
+branch = true
+command_line = -m pytest
+source =
+  cogs
+  ibis

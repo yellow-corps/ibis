@@ -1,0 +1,9 @@
+# Red-DiscordBot
+Red-DiscordBot==3.5.22
+
+# sostickets
+PyYAML==6.0.3
+jsonschema==4.26.0
+
+# persistmessages
+duckdb==1.4.4
