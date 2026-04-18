@@ -1,6 +1,6 @@
 # Red-DiscordBot
 wheel==0.46.3
-Red-DiscordBot==3.5.22
+Red-DiscordBot==3.5.24
 
 # persistmessages
 # duckdb==1.4.4
