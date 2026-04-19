@@ -12,9 +12,6 @@ services:
       RED_TOKEN: "${RED_TOKEN}"
     volumes:
       - type: volume
-        source: discord-config
-        target: /home/discord/.config/Red-DiscordBot
-      - type: volume
         source: discord-data
         target: /home/discord/.local/share/Red-DiscordBot/data
     ports:
@@ -63,5 +60,4 @@ services:
     network_mode: "service:discord"
 
 volumes:
-  discord-config:
   discord-data:
