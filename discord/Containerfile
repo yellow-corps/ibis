@@ -15,7 +15,7 @@ RUN \
 
 ARG DUCKDB_BUILD_DEPENDENCIES="g++ musl-dev linux-headers"
 RUN \
-  apk add --no-cache $DUCKDB_BUILD_DEPENDENCIES && \
+  apk add --no-cache $DUCKDB_BUILD_DEPENDENCIES libstdc++ && \
   python -m pip install --upgrade pip
 
 USER discord
@@ -29,7 +29,7 @@ RUN \
   rm requirements.txt
 
 USER root
-RUN apk del $DUCKDB_BUILD_DEPENDENCIES 
+RUN apk del $DUCKDB_BUILD_DEPENDENCIES
 USER discord
 
 RUN \
