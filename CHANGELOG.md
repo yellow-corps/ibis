@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improved internals on replying to commands.
+- Prefixed UniqueInvites `invites.txt` file with a timestamp.
 
 ### Fixed
 

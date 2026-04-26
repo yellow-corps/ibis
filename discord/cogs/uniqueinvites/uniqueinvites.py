@@ -74,7 +74,7 @@ class InviteCreator(InviteHandler):
 
     async def flush(self):
         file = discord.File(
-            fp=StringIO("\n".join(self.invites)), filename="invites.txt"
+            fp=StringIO("\n".join(self.invites)), filename=ibis.file.unique("invites.txt")
         )
         await self.ctx.reply(
             f"{len(self.invites)}/{self.amount} invites created for {self.channel.mention}",
