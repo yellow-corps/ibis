@@ -14,7 +14,7 @@ A discord bot for the yellow corps
 # Requirments
 
 - [Git](https://git-scm.com)
-- [Docker](https://www.docker.com)/[Podman](https://podman-desktop.io)
+- [Docker](https://www.docker.com)
 - A [Discord](https://discord.com/developers) App/Bot Token
   - _Adding a Bot to a Discord server is not covered in these instructions._
   - _See [Red-DiscordBot](https://docs.discord.red/en/stable/bot_application_guide.html) Documentation._
@@ -57,8 +57,8 @@ docker compose up -d
 
 This will do the following:
 
-- Create a number of volumes prefixed with `ibis_`.
-  - This is where any settings on the bot will be stored. If you want to migrate the bot and keep any settings, one way would be to migrate these volumes in particular to the new location.
+- Create a volume `ibis_discord-data`.
+  - This is where any settings on the bot will be stored. If you want to migrate the bot and keep any settings, one way would be to migrate this volume in particular to the new location.
 - Create a `discord` container that primary runs the bot.
 - If Shopify is configured, `shopify` and `ngrok` containers will also be created.
   - `shopify` is responsible for relaying the Shopify HTTP Webhooks to Discord via JSON RPC calls.
@@ -76,6 +76,8 @@ This will do the following:
 
 ## 1. Limit Who Can Use The Bot
 
+### 1a. `localallowlist`
+
 Add one or more people to the local allowlist for the bot, including yourself.
 
 This should prevent users not on the list from interacting with the bot at all.
@@ -92,6 +94,26 @@ _Example_
 ```discord
 [@] localallowlist add @SpiltCoffee "Knocked Over Mocha" "Bot Commander Role"
 ```
+
+### 1b. `set roles addadminrole`
+
+This allows some commands marked as `@commands.admin()` to be used by users in the server.
+
+```discord
+[@] set roles addadminrole [@<User>/User/Role]
+[@] set roles removeadminrole [@<User>/User/Role]
+```
+
+_Example_
+
+```discord
+[@] set roles addadminrole @SpiltCoffee
+[@] set roles addadminrole Knocked Over Mocha
+[@] set roles addadminrole Bot Commander Role
+```
+
+> [!NOTE]
+> Unlike with `localallowlist`, you can only provide one user or role at a time to `addadminrole`, and you do not quote anything.
 
 ## 2. Configure the Audit Channel
 
@@ -241,6 +263,12 @@ _Example_
 ```
 [@] uniqueinvites create #announcements 500
 ```
+
+> [!IMPORTANT]
+>
+> Discord allows for a maximum of 999 unique invites per server at a time.
+>
+> See [Discord Account Caps, Server Caps, and More](https://support.discord.com/hc/en-us/articles/33694251638295-Discord-Account-Caps-Server-Caps-and-More#:~:text=Unique%20invite%20codes%20per%20server)
 
 > [!NOTE]
 >

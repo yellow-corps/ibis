@@ -147,11 +147,11 @@ class UniqueInvites(commands.Cog):
                 ctx, "Must specify a positive amount of invites to create"
             )
 
-        if amount > 1000:
+        if amount > 999:
             await ibis.reply.fail(
                 ctx,
                 "For everyone's sanity, you must specify an amount of invites less than or equal "
-                + "to 1000",
+                + "to 999",
             )
 
         if not self.handler:
