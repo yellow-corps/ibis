@@ -4,7 +4,7 @@ import express from "express";
 
 import {
   DeliveryMethod,
-  LATEST_API_VERSION,
+  ApiVersion,
   WebhookHandler
 } from "@shopify/shopify-api";
 import { shopifyApp, WebhookHandlersParam } from "@shopify/shopify-app-express";
@@ -15,7 +15,7 @@ const shopify = shopifyApp({
     apiKey: process.env.SHOPIFY_CLIENT_ID,
     apiSecretKey: process.env.SHOPIFY_CLIENT_SECRET,
     scopes: ["read_orders"],
-    apiVersion: LATEST_API_VERSION
+    apiVersion: ApiVersion.January26
   },
   auth: {
     path: "/api/auth",

@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improved internals on replying to commands.
+
+### Fixed
+
+- Bump Shopify to newer version to address vulnerabilities.
+
 ## [2.2.1] - 2026-04-19
 
 ### Fixed
 
 - Fixed PersistMessages cog missing libstdc++ dependency for duckdb
-
-### Changed
-
-- Improved internals on replying to commands.
 
 ## [2.2.0] - 2026-04-18
 
