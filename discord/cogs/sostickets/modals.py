@@ -116,7 +116,7 @@ class SosTicketsModal(discord.ui.Modal, title=""):
             await self.files(),
         )
         await interaction.response.send_message(
-            f"Your submission was received. [Click here to view it.]({message.jump_url})",
+            f"Your submission was received. [Click here to view it]({message.jump_url}).",
             ephemeral=True,
         )
 

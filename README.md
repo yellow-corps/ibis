@@ -10,6 +10,7 @@ A discord bot for the yellow corps
 - Shopify Orders
 - SOS Tickets
 - Unique Invite Creation
+- Handle Change Requests
 
 # Requirments
 
@@ -288,3 +289,7 @@ We can persist messages to disk so that they can be looked up at any time, inclu
 ```
 [@] persistmessages set true
 ```
+
+# Cog Instructions
+
+* [Name Changer](discord/cogs/namechanger/README.md)
