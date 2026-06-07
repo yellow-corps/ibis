@@ -1,6 +1,5 @@
 from typing import Optional
 from dataclasses import dataclass
-import discord
 import string
 from itertools import pairwise
 import base64
@@ -29,11 +28,13 @@ class ValidationResult:
     context: Optional[str] = None
 
     def __str__(self):
-        return "{}: {} {}".format(
-            "Error" if self.error else "Warning",
-            self.description,
-            "({})".format(self.context) if self.context else "",
-        ).rstrip()
+        return " ".join(
+            [
+                "Error" if self.error else "Warning",
+                self.description,
+                *([f"({self.context}"] if self.context else []),
+            ]
+        )
 
 
 class BaseRule:
@@ -66,9 +67,9 @@ class _DuplicateThreshold(float, Enum):
 
 
 class DuplicateRule(BaseRule):
-    def __init__(self, handles: list[str] = []):
+    def __init__(self, handles: list[str] = None):
         self.description = "Handle is similar to another handle and may cause confusion"
-        self.handles = handles
+        self.handles = handles or []
 
     def validate(self, handle: str) -> Optional[ValidationResult]:
         matches: list[str] = []
@@ -96,14 +97,15 @@ class DuplicateRule(BaseRule):
             dice_coefficient = (2 * intersections) / length
 
             if dice_coefficient == _DuplicateThreshold.EXACT:
-                matches.append("EXACTLY {}".format(right_handle))
+                matches.append(f"EXACTLY {right_handle}")
             elif dice_coefficient >= _DuplicateThreshold.HIGH:
-                matches.append("VERY close to {}".format(right_handle))
+                matches.append(f"VERY close to {right_handle}")
             elif dice_coefficient >= _DuplicateThreshold.LOW:
-                matches.append("close to {}".format(right_handle))
+                matches.append(f"close to {right_handle}")
 
         if matches:
             return self.warning(", ".join(matches))
+        return None
 
 
 class ProfaneRule(BaseRule):
@@ -113,6 +115,7 @@ class ProfaneRule(BaseRule):
     def validate(self, handle: str) -> Optional[ValidationResult]:
         if _PROFANITY_REGEX.findall(self.sanitise_handle(handle)):
             return self.warning()
+        return None
 
 
 class DigitLimitRule(BaseRule):
@@ -126,8 +129,9 @@ class DigitLimitRule(BaseRule):
 
         if digits_count >= non_digits_count:
             return self.warning(
-                "{} of {} characters are digits".format(digits_count, len(handle))
+                f"{digits_count} of {len(handle)} characters are digits"
             )
+        return None
 
 
 class LengthRule(BaseRule):
@@ -137,18 +141,23 @@ class LengthRule(BaseRule):
     def validate(self, handle: str) -> Optional[ValidationResult]:
         length = len(handle)
         if length < 3 or length > 20:
-            return self.error("Length: {} characters".format(length))
+            return self.error(f"Length: {length} characters")
+        return None
 
 
 class InvalidCharactersRule(BaseRule):
     def __init__(self):
-        self.description = "Handles must only contain letters, numbers, hyphens, underscores, periods, and spaces"
+        self.description = (
+            "Handles must only contain letters, numbers, hyphens, underscores, "
+            + "periods, and spaces"
+        )
 
     def validate(self, handle: str) -> Optional[ValidationResult]:
         invalid_chars = list(set(handle) - set(_VALID_CHARACTERS))
         if invalid_chars:
             invalid_chars.sort()
-            return self.error("Invalid characters: {}".format(", ".join(invalid_chars)))
+            return self.error(f"Invalid characters: {', '.join(invalid_chars)}")
+        return None
 
 
 class SequentialPunctuationRule(BaseRule):
@@ -161,6 +170,7 @@ class SequentialPunctuationRule(BaseRule):
         for pair in pairwise(handle):
             if set(pair).issubset(_PUNCTUATION):
                 return self.error()
+        return None
 
 
 class LeadingTrailingPunctuationRule(BaseRule):
@@ -174,6 +184,7 @@ class LeadingTrailingPunctuationRule(BaseRule):
             return self.error()
 
 
+# pylint: disable=too-few-public-methods
 class HandleValidator:
     validators: list[BaseRule]
 

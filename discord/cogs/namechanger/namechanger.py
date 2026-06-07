@@ -1,11 +1,11 @@
-from redbot.core import commands, Config
-import discord
 from dataclasses import dataclass
 import logging
-from typing import Protocol, Optional
-from . import rules
+from typing import Optional
 import re
+from redbot.core import commands, Config
+import discord
 import ibis
+from . import rules
 
 _log = logging.getLogger(__name__)
 
@@ -59,7 +59,8 @@ class NameChangerModal(discord.ui.Modal, title=""):
                     [
                         "# Handle Requirements",
                         "* 3 to 20 characters",
-                        "* Must contain letters, numbers, hyphens, underscores, periods, and spaces",
+                        "* Must contain letters, numbers, hyphens, underscores, periods, and "
+                        + "spaces",
                         "* Must be unique",
                         "* No swear words or slurs",
                         "* All handle change requests will be subject to final approval",
@@ -115,6 +116,21 @@ class NameChangerModal(discord.ui.Modal, title=""):
                 if result.context:
                     yield f"  * {result.context}"
 
+    async def add_member_to_thread(
+        self, thread: discord.Thread, member: discord.Member
+    ):
+        try:
+            await thread.add_user(member)
+        # pylint: disable=broad-exception-caught
+        except Exception as ex:
+            _log.exception(
+                "Could not add user %s to thread %s.",
+                member.name,
+                thread.jump_url,
+                exc_info=ex,
+            )
+            await thread.send(f"Could not add user {member.name}")
+
     async def create_post(
         self,
         interaction: discord.Interaction,
@@ -162,12 +178,14 @@ class NameChangerModal(discord.ui.Modal, title=""):
 
         match channel:
             case discord.ForumChannel():
-                # Note: orumChannels do not currently support private threads
-                thread = await channel.create_thread(
-                    name=title,
-                    allowed_mentions=discord.AllowedMentions.none(),
-                    content=content,
-                )
+                # Note: ForumChannels do not currently support private threads
+                thread = (
+                    await channel.create_thread(
+                        name=title,
+                        allowed_mentions=discord.AllowedMentions.none(),
+                        content=content,
+                    )
+                ).thread
             case discord.TextChannel():
                 thread = await channel.create_thread(
                     name=title, type=discord.ChannelType.private_thread
@@ -181,32 +199,26 @@ class NameChangerModal(discord.ui.Modal, title=""):
                     f"Current channel is of type {channel.type}, cannot create thread."
                 )
 
-        async def add_user_to_thread(user: discord.User):
-            try:
-                await thread.add_user(user)
-            except Exception as ex:
-                await thread.send(f"Could not add user {user.name}")
-                _log.exception(
-                    f"Could not add user {user.name} to thread {thread.jump_url}.",
-                    exc_info=ex,
-                )
-
-        await add_user_to_thread(interaction.user)
+        await self.add_member_to_thread(thread, interaction.user)
 
         for responder in self.config.responders:
             match responder:
-                case discord.User() as user:
-                    await add_user_to_thread(user)
+                case discord.Member() as member:
+                    await self.add_member_to_thread(thread, member)
                 case discord.Role() as role:
-                    for user in role.members:
-                        await add_user_to_thread(user)
+                    for member in role.members:
+                        await self.add_member_to_thread(thread, member)
                 case _:
                     _log.error(
-                        f"Tried to add unknown object {responder} to thread {thread.jump_url}."
+                        "Tried to add unknown object %s (%s) to thread %s.",
+                        type(responder),
+                        responder,
+                        thread.jump_url,
                     )
 
         return thread
 
+    # pylint: disable=arguments-differ
     async def on_submit(self, interaction: discord.Interaction):
         data = self.parse_data()
         split_regex = re.compile(r"(\[|\(|\{)")
@@ -241,6 +253,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
             ephemeral=True,
         )
 
+    # pylint: disable=arguments-differ
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         await interaction.response.send_message(
             "Something went wrong and your submission was not received. Please try again.",
@@ -265,20 +278,22 @@ class NameChanger(commands.Cog):
 
     async def get_responders(
         self, guild: discord.Guild
-    ) -> list[discord.User | discord.Role]:
+    ) -> list[discord.Member | discord.Role]:
         return [
-            user
-            for user in [
+            responder
+            for responder in [
                 guild.get_member(id) or guild.get_role(id)
                 for id in await self.config.guild(guild).responders()
             ]
-            if user
+            if responder
         ]
 
     async def set_responders(
-        self, guild: discord.Guild, users: list[discord.User | discord.Role]
+        self, guild: discord.Guild, responders: list[discord.Member | discord.Role]
     ):
-        await self.config.guild(guild).responders.set([u.id for u in users])
+        await self.config.guild(guild).responders.set(
+            [responder.id for responder in responders]
+        )
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -322,23 +337,27 @@ class NameChanger(commands.Cog):
     async def namechanger_responders(self, ctx: commands.Context):
         """Add or remove responders for name changes."""
         if not ctx.invoked_subcommand:
-            users = (
-                ", ".join(u.mention for u in await self.get_responders(ctx.guild))
+            responders = (
+                ", ".join(
+                    responder.mention
+                    for responder in await self.get_responders(ctx.guild)
+                )
                 or "<no responders>"
             )
-            await ibis.reply.success(ctx, f"Current responders: {users}")
+            await ibis.reply.success(ctx, f"Current responders: {responders}")
 
     @namechanger_responders.command(name="add")
     async def namechanger_responders_add(
         self,
         ctx: commands.Context,
-        users: commands.Greedy[discord.User | discord.Role],
+        users: commands.Greedy[discord.Member | discord.Role],
     ):
         """Add responders for name changes."""
         if not users:
             await ibis.reply.fail(
                 ctx,
-                "No responders provided or I cannot see any of the users you mentioned.",
+                "No responders provided, or I cannot see any of the members or roles you "
+                + "mentioned.",
             )
             return
 
@@ -348,7 +367,7 @@ class NameChanger(commands.Cog):
         if current_responders == new_responders:
             await ibis.reply.fail(
                 ctx,
-                "All of the users provided were already marked as responders.",
+                "All of the members or roles provided were already marked as responders.",
             )
             return
 
@@ -360,13 +379,14 @@ class NameChanger(commands.Cog):
     async def namechanger_responders_remove(
         self,
         ctx: commands.Context,
-        users: commands.Greedy[discord.User | discord.Role],
+        users: commands.Greedy[discord.Member | discord.Role],
     ):
         """Remove responders for name changes."""
         if not users:
             await ibis.reply.fail(
                 ctx,
-                "No users provided or I cannot see any of the users you mentioned.",
+                "No responders provided, or I cannot see any of the members or roles you "
+                + "mentioned.",
             )
             return
 
@@ -375,7 +395,7 @@ class NameChanger(commands.Cog):
 
         if current_responders == new_responders:
             await ibis.reply.fail(
-                ctx, "None of the users provided were marked as responders."
+                ctx, "None of the members or roles provided were marked as responders."
             )
             return
 

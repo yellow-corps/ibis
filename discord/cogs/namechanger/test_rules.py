@@ -8,6 +8,7 @@ class HandleValidatorTest(unittest.TestCase):
         validator = rules.HandleValidator(handles)
         return validator.validate(handle)
 
+    # pylint: disable=too-many-arguments
     def assert_result(
         self,
         handle: str,
@@ -15,9 +16,9 @@ class HandleValidatorTest(unittest.TestCase):
         expected_rule: type[rules.BaseRule],
         expected_context: Optional[str] = None,
         *,
-        handles: list[str] = []
+        handles: Optional[list[str]] = None
     ):
-        results = self.run_test(handle, handles)
+        results = self.run_test(handle, handles or [])
         self.assertEqual(len(results), 1, results)
         self.assertEqual(
             results[0],
@@ -26,8 +27,8 @@ class HandleValidatorTest(unittest.TestCase):
             ),
         )
 
-    def assert_ok(self, handle: str, *, handles: list[str] = []):
-        results = self.run_test(handle, handles)
+    def assert_ok(self, handle: str, *, handles: Optional[list[str]] = None):
+        results = self.run_test(handle, handles or [])
         self.assertEqual(len(results), 0, results)
 
     def test_duplicate(self):
