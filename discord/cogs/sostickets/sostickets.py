@@ -15,6 +15,7 @@ class SosTicketsException(Exception):
     pass
 
 
+# pylint: disable-next=too-many-public-methods
 class SosTickets(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.config = Config.get_conf(

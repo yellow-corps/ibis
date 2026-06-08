@@ -80,6 +80,7 @@ class RoleAssignee(Assignee):
 
 
 @dataclass
+# pylint: disable-next=too-many-instance-attributes
 class Prompt:
     prompt_id: str
     full_title: str

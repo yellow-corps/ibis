@@ -7,6 +7,7 @@ import discord
 import ibis
 
 
+# pylint: disable-next=too-many-instance-attributes
 class ShopifyOrder:
     def __init__(self, bot: commands.Bot, body):
         self._bot = bot
@@ -134,6 +135,7 @@ class ShopifyUtils:
         return embed
 
 
+# pylint: disable-next=too-many-public-methods
 class Shopify(commands.Cog):
     bot: commands.Bot
 
@@ -215,7 +217,8 @@ class Shopify(commands.Cog):
             await self.set_staff([])
             await ibis.reply.success(
                 ctx,
-                "Channel updated. Staff members were cleared, so make sure to `shopify staff add <staff>` staff members again.",
+                "Channel updated. Staff members were cleared, so make sure to `shopify staff add "
+                + "<staff>` staff members again.",
             )
 
     @shopify.command(name="tag")
@@ -230,7 +233,8 @@ class Shopify(commands.Cog):
             await self.set_tag_name(tag_name)
             await ibis.reply.success(
                 ctx,
-                f'Tag updated, will look for the tag named "{tag_name}" to apply to Shopify orders.',
+                f'Tag updated, will look for the tag named "{tag_name}" to apply to Shopify '
+                + "orders.",
             )
 
     @shopify.command(name="message")
@@ -290,7 +294,8 @@ class Shopify(commands.Cog):
             if user.guild != guild:
                 await ibis.reply.fail(
                     ctx,
-                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                    "One or more of the members/roles provided is not visible from the server the "
+                    + "shopify channel is in.",
                 )
                 return
 
@@ -335,7 +340,8 @@ class Shopify(commands.Cog):
             if user.guild != guild:
                 await ibis.reply.fail(
                     ctx,
-                    "One or more of the members/roles provided is not visible from the server the shopify channel is in.",
+                    "One or more of the members/roles provided is not visible from the server the "
+                    + "shopify channel is in.",
                 )
                 return
 
@@ -393,9 +399,11 @@ class Shopify(commands.Cog):
     async def add_thread_user(self, thread: discord.Thread, member: discord.Member):
         try:
             await thread.add_user(member)
+        # pylint: disable-next=broad-exception-caught
         except Exception:
             await thread.send(
-                f"-# Warning: Could not add `{member.name}` to thread. Can they see this channel? (Message removed in 60s)",
+                f"-# Warning: Could not add `{member.name}` to thread. Can they see this channel? "
+                + "(Message removed in 60s)",
                 delete_after=60,
             )
 

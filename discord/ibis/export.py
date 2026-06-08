@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 from redbot.core import Config
 import discord
 
-__internal_config: Config = None
+__INTERNAL_CONFIG: Config = None
 
 
 class ExportException(Exception):
@@ -12,18 +12,19 @@ class ExportException(Exception):
 
 
 def config() -> Config:
-    global __internal_config
-    if not __internal_config:
-        __internal_config = Config.get_conf(
+    # pylint: disable-next=global-statement
+    global __INTERNAL_CONFIG
+    if not __INTERNAL_CONFIG:
+        __INTERNAL_CONFIG = Config.get_conf(
             cog_instance=None,
             cog_name="TimeZone",
             identifier=863117321820307876,
             force_registration=True,
         )
         default_global = {"timezone": None}
-        __internal_config.register_global(**default_global)
+        __INTERNAL_CONFIG.register_global(**default_global)
 
-    return __internal_config
+    return __INTERNAL_CONFIG
 
 
 async def channel(target: discord.TextChannel, file_format: str) -> discord.File:
@@ -35,6 +36,7 @@ async def channel(target: discord.TextChannel, file_format: str) -> discord.File
         timezone_str = await config().timezone()
         if timezone_str:
             headers["tz"] = ZoneInfo(timezone_str).key
+    # pylint: disable-next=broad-exception-caught
     except Exception:
         # if failed to get timezone, just continue
         pass

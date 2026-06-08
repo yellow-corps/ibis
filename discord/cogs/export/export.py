@@ -30,10 +30,12 @@ class ExportCog(commands.Cog):
             try:
                 text_file = await ibis.export.channel(channel, "text")
                 await ibis.reply.success(ctx, files=[text_file])
+            # pylint: disable-next=broad-exception-caught
             except Exception as ex:
                 await ibis.reply.fail(
                     ctx,
-                    "Exporting channel as text failed (perhaps the export is larger than I can upload?), please see log.",
+                    "Exporting channel as text failed (perhaps the export is larger than I can "
+                    + "upload?), please see log.",
                 )
                 _log.warning("Exporting channel as text failed.", exc_info=ex)
 
@@ -45,9 +47,11 @@ class ExportCog(commands.Cog):
             try:
                 html_file = await ibis.export.channel(channel, "html")
                 await ibis.reply.success(ctx, files=[html_file])
+            # pylint: disable-next=broad-exception-caught
             except Exception as ex:
                 await ibis.reply.fail(
                     ctx,
-                    "Exporting channel as html failed (perhaps the export is larger than I can upload?), please see log.",
+                    "Exporting channel as html failed (perhaps the export is larger than I can "
+                    + "upload?), please see log.",
                 )
                 _log.warning("Exporting channel as html failed.", exc_info=ex)
