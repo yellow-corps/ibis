@@ -59,7 +59,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
                     [
                         "# Handle Requirements",
                         "* 3 to 20 characters",
-                        "* Must contain letters, numbers, hyphens, underscores, periods, and "
+                        "* Must contain only letters, numbers, hyphens, underscores, periods, and "
                         + "spaces",
                         "* Must be unique",
                         "* No swear words or slurs",
