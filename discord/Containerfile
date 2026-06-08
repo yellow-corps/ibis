@@ -21,12 +21,12 @@ RUN \
 USER discord
 WORKDIR /home/discord
 
-COPY ./requirements.txt requirements.txt
+COPY ./requirements.prod.txt requirements.prod.txt
 RUN \
   export PATH="$PATH:/home/discord/.local/bin" && \
-  python -m pip install --user -r requirements.txt && \
+  python -m pip install --user -r requirements.prod.txt && \
   python -m pip cache purge && \
-  rm requirements.txt
+  rm requirements.prod.txt
 
 USER root
 RUN apk del $DUCKDB_BUILD_DEPENDENCIES
