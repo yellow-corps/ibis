@@ -10,10 +10,9 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
   cd "$BASE_DIR"
   
-  echo "Running tests in cogs"
-  python -m unittest discover -s cogs
+  echo "Running tests"
+  python -m coverage run
 
-  # Uncomment once tests exist in ibis
-  # echo "Running tests in ibis"
-  # python -m unittest discover -s ibis
+  echo "Producting coverage reports"
+  python -m coverage html
 )

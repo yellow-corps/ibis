@@ -1,0 +1,8 @@
+[run]
+command_line = "-m unittest discover -s cogs"
+branch = true
+data_file = "target/coverage.db"
+omit = ["test_*.py"]
+
+[html]
+directory = "target/html"
