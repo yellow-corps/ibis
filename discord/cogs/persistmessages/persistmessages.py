@@ -9,6 +9,7 @@ import ibis
 _log = logging.getLogger(__name__)
 
 
+# pylint: disable-next=too-many-instance-attributes
 class PersistMessages(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -29,14 +30,12 @@ class PersistMessages(commands.Cog):
         cog_data_path = data_manager.cog_data_path(self)
         db_path = f"{cog_data_path}/messages.db"
         self.db = duckdb.connect(db_path)
-        self.db.sql(
-            """
+        self.db.sql("""
             CREATE TABLE IF NOT EXISTS messages (
               id BIGINT PRIMARY KEY,
               data JSON
             );
-            """
-        )
+            """)
 
         self.enabled = False
         self.init_enabled()
@@ -83,9 +82,7 @@ class PersistMessages(commands.Cog):
         """Enable or disable the PersistMessages cog to actually monitor"""
         if enabled is None:
             enabled = "enabled" if await self.get_enabled() else "disabled"
-            await ibis.reply.success(
-                ctx, f"PersistMessages is currently {enabled}"
-            )
+            await ibis.reply.success(ctx, f"PersistMessages is currently {enabled}")
         else:
             await self.set_enabled(enabled)
             await ibis.reply.success(ctx)
@@ -95,6 +92,7 @@ class PersistMessages(commands.Cog):
             self.db.execute(
                 "INSERT OR REPLACE INTO messages VALUES (?, ?)", [int(data["id"]), data]
             )
+        # pylint: disable-next=broad-exception-caught
         except Exception as ex:
             _log.warning(
                 "Swallowed an exception while saving a persisted message", exc_info=ex
@@ -117,6 +115,7 @@ class PersistMessages(commands.Cog):
             # pylint: disable-next=protected-access
             self.state._messages.append(persisted_message)
             return persisted_message
+        # pylint: disable-next=broad-exception-caught
         except Exception as ex:
             _log.warning(
                 "Swallowed an exception while loading a persisted message", exc_info=ex

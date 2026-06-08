@@ -1,7 +1,7 @@
 from os import unlink
 from redbot.core import commands, Config
-import discord
 from redbot.core.utils._internal_utils import create_backup
+import discord
 import ibis
 
 

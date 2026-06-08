@@ -121,7 +121,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
     ):
         try:
             await thread.add_user(member)
-        # pylint: disable=broad-exception-caught
+        # pylint: disable-next=broad-exception-caught
         except Exception as ex:
             _log.exception(
                 "Could not add user %s to thread %s.",
@@ -218,7 +218,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
 
         return thread
 
-    # pylint: disable=arguments-differ
+    # pylint: disable-next=arguments-differ
     async def on_submit(self, interaction: discord.Interaction):
         data = self.parse_data()
         split_regex = re.compile(r"(\[|\(|\{)")
@@ -253,7 +253,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
             ephemeral=True,
         )
 
-    # pylint: disable=arguments-differ
+    # pylint: disable-next=arguments-differ
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         await interaction.response.send_message(
             "Something went wrong and your submission was not received. Please try again.",

@@ -11,6 +11,7 @@ class TimeZoneCog(commands.Cog):
     async def get_timezone(self) -> Union[ZoneInfo, None]:
         try:
             return ZoneInfo(await self.config.timezone())
+        # pylint: disable-next=broad-exception-caught
         except Exception:
             return None
 

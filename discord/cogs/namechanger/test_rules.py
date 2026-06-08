@@ -8,7 +8,7 @@ class HandleValidatorTest(unittest.TestCase):
         validator = rules.HandleValidator(handles)
         return validator.validate(handle)
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable-next=too-many-arguments
     def assert_result(
         self,
         handle: str,

@@ -7,6 +7,7 @@ from .schema import PromptsConfig, Prompt, ModalItemType
 _log = logging.getLogger(__name__)
 
 
+# pylint: disable-next=too-few-public-methods
 class SosTicketsCallback(Protocol):
     async def __call__(
         self, message: str, files: list[discord.File]
@@ -110,6 +111,7 @@ class SosTicketsModal(discord.ui.Modal, title=""):
                 case _:
                     raise ValueError(f'Unknown `type` of "{item.type}" provided.')
 
+    # pylint: disable-next=arguments-differ
     async def on_submit(self, interaction: discord.Interaction):
         message = await self.callback(
             "\n".join(self.format_response(interaction)),
@@ -120,6 +122,7 @@ class SosTicketsModal(discord.ui.Modal, title=""):
             ephemeral=True,
         )
 
+    # pylint: disable-next=arguments-differ
     async def on_error(self, interaction: discord.Interaction, error: Exception):
         await interaction.response.send_message(
             "Something went wrong and your submission was not received. Please try again.",

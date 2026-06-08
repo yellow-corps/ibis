@@ -182,9 +182,10 @@ class LeadingTrailingPunctuationRule(BaseRule):
     def validate(self, handle: str) -> Optional[ValidationResult]:
         if handle[0] in _PUNCTUATION or handle[-1] in _PUNCTUATION:
             return self.error()
+        return None
 
 
-# pylint: disable=too-few-public-methods
+# pylint: disable-next=too-few-public-methods
 class HandleValidator:
     validators: list[BaseRule]
 

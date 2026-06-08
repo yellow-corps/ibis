@@ -1,7 +1,7 @@
 from io import StringIO
+import csv
 from redbot.core import commands, Config
 import discord
-import csv
 import ibis
 
 
