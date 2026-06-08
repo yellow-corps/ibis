@@ -1,0 +1,11 @@
+[tool.pylint.reports]
+score = false
+
+[tool.pylint."messages control"]
+disable = [
+  "import-error",
+  "missing-module-docstring",
+  "missing-function-docstring",
+  "missing-class-docstring",
+  "duplicate-code",
+]
