@@ -220,6 +220,8 @@ class NameChangerModal(discord.ui.Modal, title=""):
 
     # pylint: disable-next=arguments-differ
     async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True, thinking=True)
+
         data = self.parse_data()
         split_regex = re.compile(r"(\[|\(|\{)")
 
@@ -233,7 +235,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
         results = validator.validate(data.new_handle)
 
         if any(result.error for result in results):
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "\n".join(
                     [
                         f"Your requested new handle, `{data.new_handle}`, has failed validation.",
@@ -248,19 +250,25 @@ class NameChangerModal(discord.ui.Modal, title=""):
 
         thread = await self.create_post(interaction, data, results)
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"Your handle change request was received. [Click here to view it]({thread.jump_url}).",
             ephemeral=True,
         )
 
     # pylint: disable-next=arguments-differ
     async def on_error(self, interaction: discord.Interaction, error: Exception):
-        await interaction.response.send_message(
-            "Something went wrong and your submission was not received. Please try again.",
-            ephemeral=True,
-        )
-
         _log.exception("Something went wrong handling a submission", exc_info=error)
+
+        if interaction.response.is_done():
+            await interaction.followup.send(
+                "Something went wrong and your submission was not received. Please try again.",
+                ephemeral=True,
+            )
+        else:
+            await interaction.response.send_message(
+                "Something went wrong and your submission was not received. Please try again.",
+                ephemeral=True,
+            )
 
 
 class NameChanger(commands.Cog):
