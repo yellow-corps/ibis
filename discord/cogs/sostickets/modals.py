@@ -113,24 +113,31 @@ class SosTicketsModal(discord.ui.Modal, title=""):
 
     # pylint: disable-next=arguments-differ
     async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True, thinking=True)
+
         message = await self.callback(
             "\n".join(self.format_response(interaction)),
             await self.files(),
         )
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"Your submission was received. [Click here to view it]({message.jump_url}).",
             ephemeral=True,
         )
 
     # pylint: disable-next=arguments-differ
     async def on_error(self, interaction: discord.Interaction, error: Exception):
-        await interaction.response.send_message(
-            "Something went wrong and your submission was not received. Please try again.",
-            ephemeral=True,
-        )
-
-        # Make sure we know what the error actually is
         _log.exception("Something went wrong handling a submission", exc_info=error)
+
+        if interaction.response.is_done():
+            await interaction.followup.send(
+                "Something went wrong and your submission was not received. Please try again.",
+                ephemeral=True,
+            )
+        else:
+            await interaction.response.send_message(
+                "Something went wrong and your submission was not received. Please try again.",
+                ephemeral=True,
+            )
 
     async def files(self) -> list[discord.File]:
         files: list[discord.File] = []
