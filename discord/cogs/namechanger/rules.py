@@ -27,15 +27,6 @@ class ValidationResult:
     description: str
     context: Optional[str] = None
 
-    def __str__(self):
-        return " ".join(
-            [
-                "Error" if self.error else "Warning",
-                self.description,
-                *([f"({self.context}"] if self.context else []),
-            ]
-        )
-
 
 class BaseRule:
     description: str
