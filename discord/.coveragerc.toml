@@ -1,5 +1,5 @@
 [run]
-command_line = "-m pytest cogs"
+command_line = "-m pytest -c .pytest.ini cogs"
 branch = true
 data_file = "target/coverage.db"
 omit = ["test_*.py"]
