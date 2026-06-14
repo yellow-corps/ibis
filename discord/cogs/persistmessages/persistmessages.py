@@ -10,7 +10,7 @@ _log = logging.getLogger(__name__)
 
 
 # pylint: disable-next=too-many-instance-attributes
-class PersistMessages(commands.Cog):
+class PersistMessagesCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         # yeah, look, this is suuuuuuuuper dodgy, but I still wanna do it okay?

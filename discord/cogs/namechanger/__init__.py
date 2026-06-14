@@ -1,5 +1,5 @@
-from .namechanger import NameChanger
+from .namechanger import NameChangerCog
 
 
 async def setup(bot):
-    await bot.add_cog(NameChanger(bot))
+    await bot.add_cog(NameChangerCog(bot))
