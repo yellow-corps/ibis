@@ -1,5 +1,5 @@
-from .uniqueinvites import UniqueInvites
+from .uniqueinvites import UniqueInvitesCog
 
 
 async def setup(bot):
-    await bot.add_cog(UniqueInvites())
+    await bot.add_cog(UniqueInvitesCog())

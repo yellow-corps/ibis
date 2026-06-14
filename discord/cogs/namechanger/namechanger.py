@@ -271,7 +271,7 @@ class NameChangerModal(discord.ui.Modal, title=""):
             )
 
 
-class NameChanger(commands.Cog):
+class NameChangerCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.config = Config.get_conf(
             self, identifier=103476830113429256, force_registration=True

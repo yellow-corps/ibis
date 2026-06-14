@@ -1,5 +1,5 @@
-from .sostickets import SosTickets
+from .sostickets import SosTicketsCog
 
 
 async def setup(bot):
-    await bot.add_cog(SosTickets(bot))
+    await bot.add_cog(SosTicketsCog(bot))

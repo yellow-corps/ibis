@@ -136,7 +136,7 @@ class ShopifyUtils:
 
 
 # pylint: disable-next=too-many-public-methods
-class Shopify(commands.Cog):
+class ShopifyCog(commands.Cog):
     bot: commands.Bot
 
     def __init__(self, bot: commands.Bot):
