@@ -1,0 +1,46 @@
+---
+name: Build Discord
+
+on:
+  pull_request:
+    paths:
+      - 'discord/**'
+      - '.github/workflows/build-discord.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'discord/**'
+      - '.github/workflows/build-discord.yml'
+
+permissions:
+   contents: read
+
+jobs:
+  build-discord:
+    name: Build Discord
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install dependencies
+        run: |
+          discord/ensure-venv.sh
+      - name: Format Discord
+        run: |
+          discord/format.sh
+      - name: Lint Discord
+        run: |
+          discord/lint.sh
+      - name: Compile Discord
+        run: |
+          discord/compile.sh
+      - name: Test Discord
+        run: |
+          discord/test.sh
