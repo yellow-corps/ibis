@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed bug in SOS Tickets when handling prompt configs.
+- Allow Forum channels to be exported in HTML.
 
 ## [2.4.1] - 2026-07-08
 

@@ -40,7 +40,11 @@ class ExportCog(commands.Cog):
                 _log.warning("Exporting channel as text failed.", exc_info=ex)
 
     @export.command(name="html")
-    async def export_html(self, ctx: commands.Context, channel: discord.TextChannel):
+    async def export_html(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.ForumChannel],
+    ):
         "Export a channel into HTML"
 
         async with ctx.typing():
