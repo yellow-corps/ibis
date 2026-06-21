@@ -1,12 +1,12 @@
 from typing import Union, Optional
 from zoneinfo import ZoneInfo
-from redbot.core import commands
+from redbot.core import commands, Config
 import ibis
 
 
 class TimeZoneCog(commands.Cog):
-    def __init__(self):
-        self.config = ibis.export.config()
+    def __init__(self, config: Config):
+        self.config = config
 
     async def get_timezone(self) -> Union[ZoneInfo, None]:
         try:
@@ -15,17 +15,32 @@ class TimeZoneCog(commands.Cog):
         except Exception:
             return None
 
-    async def set_timezone(self, timezone: ZoneInfo):
-        await self.config.timezone.set(timezone.key)
+    async def set_timezone(self, timezone: Optional[ZoneInfo]):
+        await self.config.timezone.set(timezone.key if timezone else None)
 
-    @commands.command()
+    @commands.group()
     @commands.is_owner()
-    async def timezone(self, ctx: commands.Context, timezone: Optional[ZoneInfo]):
-        "Get or set the timezone to use"
+    async def timezone(self, ctx: commands.Context):
+        "Timezone"
 
-        if not timezone:
-            await ibis.reply.success(ctx, f"Timezone: {(await self.get_timezone())}")
-            return
+    @timezone.command()
+    @commands.is_owner()
+    async def timezone_get(self, ctx: commands.Context):
+        "Get the timezone"
+        await ibis.reply.success(ctx, f"Timezone: {(await self.get_timezone())}")
+
+    @timezone.command()
+    @commands.is_owner()
+    async def timezone_set(self, ctx: commands.Context, timezone: ZoneInfo):
+        "Set the timezone"
 
         await self.set_timezone(timezone)
+        await ibis.reply.success(ctx)
+
+    @timezone.command()
+    @commands.is_owner()
+    async def timezone_clear(self, ctx: commands.Context):
+        "Clear the timezone"
+
+        await self.set_timezone(None)
         await ibis.reply.success(ctx)
