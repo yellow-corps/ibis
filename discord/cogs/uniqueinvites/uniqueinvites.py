@@ -135,6 +135,33 @@ class UniqueInvitesCog(commands.Cog):
         "UniqueInvites commands"
 
     @uniqueinvites.command()
+    async def list(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.ForumChannel],
+    ):
+        """List all unique, non-expiring, single use invites for the specified channel"""
+
+        invites = list(
+            filter(
+                lambda invite: (invite.expires_at is None) and (invite.max_uses == 1),
+                await channel.invites(),
+            )
+        )
+
+        if len(invites) == 0:
+            await ibis.reply.fail(ctx, f"No invites found for {channel.mention}")
+            return
+
+        file = discord.File(
+            fp=StringIO("\n".join([invite.url for invite in invites])),
+            filename=ibis.file.unique("invites.txt"),
+        )
+        await ibis.reply.success(
+            ctx, f"Found {len(invites)} for {channel.mention}", file=file
+        )
+
+    @uniqueinvites.command()
     async def create(
         self,
         ctx: commands.Context,
