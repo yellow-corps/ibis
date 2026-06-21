@@ -4,7 +4,7 @@ A cog for setting the timezone, used by other cogs.
 
 ## Usage
 
-- Must be a bot admin to use commands.
+- Must be a bot owner to use commands.
 - Bot wide.
 
 ### Load
