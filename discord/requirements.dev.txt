@@ -5,3 +5,4 @@ coverage==7.14.1
 pylint==4.0.5
 pytest==9.0.3
 pytest-asyncio==1.4.0
+tzdata==2026.2

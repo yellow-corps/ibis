@@ -6,6 +6,8 @@ from . import setup
 
 @pytest.mark.asyncio
 async def test_init():
-    bot = mock.AsyncMock(commands.Bot)
-    await setup(bot)
-    bot.add_cog.assert_awaited()
+    with mock.patch("ibis.export.config") as mock_config:
+        bot = mock.AsyncMock(commands.Bot)
+        await setup(bot)
+        bot.add_cog.assert_awaited_once()
+        mock_config.assert_called_once()

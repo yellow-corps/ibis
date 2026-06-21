@@ -292,4 +292,5 @@ We can persist messages to disk so that they can be looked up at any time, inclu
 
 # Cog Instructions
 
-* [Name Changer](discord/cogs/namechanger/README.md)
+- [Name Changer](discord/cogs/namechanger/README.md)
+- [TimeZone](discord/cogs/timezone/README.md)
