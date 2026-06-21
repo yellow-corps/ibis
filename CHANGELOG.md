@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed TimeZone cog commands to use `get`/`set`/`clear` sub-commands.
+
 ## [2.4.0] - 2026-06-21
 
 ### Added
