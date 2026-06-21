@@ -3,7 +3,8 @@
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 VENV_DIR="$BASE_DIR/.venv"
 
-if [[ "$(uname -s)" == "Windows" ]]; then
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+if [[ "$OS" == "windows" ]] || [[ "$OS" =~ "mingw" ]]; then
   ACTIVATE_SCRIPT="$VENV_DIR/Scripts/activate"
 else
   ACTIVATE_SCRIPT="$VENV_DIR/bin/activate"
