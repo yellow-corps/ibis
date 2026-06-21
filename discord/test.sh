@@ -13,6 +13,10 @@ BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
   echo "Running tests"
   python -m coverage run
 
-  echo "Producting coverage reports"
-  python -m coverage html
+  if [[ -n "$CI" ]]; then
+    python -m coverage report
+  else
+    echo "Producting coverage reports"
+    python -m coverage html
+  fi
 )
