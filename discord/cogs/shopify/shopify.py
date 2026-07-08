@@ -1,10 +1,13 @@
 from datetime import datetime
 from typing import Union, Literal
+import logging
 import asyncio
 import re
 from redbot.core import commands, Config
 import discord
 import ibis
+
+_log = logging.getLogger(__name__)
 
 
 # pylint: disable-next=too-many-instance-attributes
@@ -208,10 +211,14 @@ class ShopifyCog(commands.Cog):
     ):
         """Globally get or set Shopify output channel."""
         if not channel:
-            await ibis.reply.success(
-                ctx,
-                f"Shopify channel currently set to {(await self.get_channel()).mention}",
-            )
+            channel = await self.get_channel()
+            if channel:
+                await ibis.reply.success(
+                    ctx,
+                    f"Shopify channel currently set to {channel.mention}",
+                )
+            else:
+                await ibis.reply.success(ctx, "Shopify channel is not set")
         else:
             await self.set_channel(channel)
             await self.set_staff([])
@@ -359,6 +366,10 @@ class ShopifyCog(commands.Cog):
 
     async def webhook(self, topic: str, body) -> bool:
         if not await self.config.shop_channel():
+            _log.info(
+                "Received %s request, but no shop channel is configured, ignoring.",
+                topic,
+            )
             return True
 
         order = ShopifyOrder(self.bot, body)
@@ -372,6 +383,8 @@ class ShopifyCog(commands.Cog):
                 await self.orders_fulfilled(order)
             case "ORDERS_CANCELLED":
                 await self.orders_cancelled(order)
+            case _:
+                _log.error("Unknown topic %s supplied.", topic)
 
         return True
 
