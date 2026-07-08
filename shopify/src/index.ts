@@ -33,7 +33,7 @@ async function callBot(topic: string, shop: string, body: string) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
       jsonrpc: "2.0",
-      method: "SHOPIFY__WEBHOOK",
+      method: "SHOPIFYCOG__WEBHOOK",
       params: [topic, bodyObj],
       id: crypto.randomUUID()
     });
@@ -79,9 +79,13 @@ const defaultHandler: WebhookHandler = {
   deliveryMethod: DeliveryMethod.Http,
   callbackUrl: shopify.config.webhooks.path,
   async callback(topic, shop, body) {
-    callBot(topic, shop, body).catch((error) => {
-      console.error("[ibis-shopify/ERROR]", error.stack ?? error);
-    });
+    callBot(topic, shop, body)
+      .then((result) => {
+        console.log("[ibis-shopify/INFO]", topic, result);
+      })
+      .catch((error) => {
+        console.error("[ibis-shopify/ERROR]", error.stack ?? error);
+      });
   }
 };
 

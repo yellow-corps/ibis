@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed TimeZone cog commands to use `get`/`set`/`clear` sub-commands.
+- Shopify cog now logs in some cases when webhook was received but nothing happened.
+
+### Fixed
+
+- Shopify container calling outdated RPC method name.
+- `[@] shopify channel` when no channel is set no longer errors.
 
 ## [2.4.0] - 2026-06-21
 
