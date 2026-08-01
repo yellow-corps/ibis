@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-08-01
+
 ### Changed
 
 - SOS Tickets buttons allow for changing the button style.
@@ -316,7 +318,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[Unreleased]: https://github.com/yellow-corps/ibis/compare/v2.4.2...HEAD
+[Unreleased]: https://github.com/yellow-corps/ibis/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/yellow-corps/ibis/compare/v2.4.2...v2.5.0
 [2.4.2]: https://github.com/yellow-corps/ibis/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/yellow-corps/ibis/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/yellow-corps/ibis/compare/v2.3.2...v2.4.0
