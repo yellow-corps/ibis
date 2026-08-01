@@ -47,8 +47,6 @@ class CsvMembersCog(commands.Cog):
     async def csvmembers(self, ctx: commands.Context):
         "Generate a CSV of all members in the server"
 
-        print(ctx)
-
         async with ctx.typing():
             try:
                 csv_file = self.builder.build_csv(ctx.guild)
