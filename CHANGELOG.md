@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- SOS Tickets buttons allow for changing the button style.
+
 ## [2.4.2] - 2026-08-01
 
 ### Fixed

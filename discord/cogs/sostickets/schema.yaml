@@ -105,6 +105,11 @@ properties:
           description: Hex color code for accent color in embed.
           pattern: "^#[0-9a-fA-F]{6}$"
 
+        style:
+          type: string
+          enum: [primary, secondary, success, danger]
+          description: Optional. Discord ButtonStyle to use. Defaults to "primary".
+
 required:
   - prompts
 
