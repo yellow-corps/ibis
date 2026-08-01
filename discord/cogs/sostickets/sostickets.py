@@ -432,11 +432,11 @@ class SosTicketsCog(commands.Cog):
                 filename="prompts-config.yaml",
             )
             await ibis.reply.success(
-                ctx.message, "Current prompts config is attached", file=file
+                ctx, "Current prompts config is attached", file=file
             )
         else:
             await ibis.reply.success(
-                ctx.message, "No prompts config is defined currently"
+                ctx, "No prompts config is defined currently"
             )
 
     @sostickets_prompts_config.command("set")
@@ -453,18 +453,18 @@ class SosTicketsCog(commands.Cog):
                         await self.set_prompts_config(ctx.guild, config)
                     except yaml.YAMLError as exc:
                         await ibis.reply.fail(
-                            ctx.message, f"Attachment did not contain valid YAML: {exc}"
+                            ctx, f"Attachment did not contain valid YAML: {exc}"
                         )
                     except ValidationError as exc:
                         await ibis.reply.fail(
-                            ctx.message,
+                            ctx,
                             f"Attachment did not validate against expected YAML schema: {exc}",
                         )
                     await self.apply_prompts_config(ctx.guild)
-                    await ibis.reply.success(ctx.message)
+                    await ibis.reply.success(ctx)
                     return
         await ibis.reply.fail(
-            ctx.message,
+            ctx,
             "You must attach a `.yaml` file to your message to set the config",
         )
 
