@@ -19,6 +19,11 @@ properties:
           type: string
           description: Title of the prompt.
 
+        order:
+          type: number
+          minimum: 1
+          description: Optional. Order in which prompt is displayed, ascending. Defaults to being displayed at the end.
+
         emoji:
           type: string
           description: Optional. Emoji prefix for the prompt.

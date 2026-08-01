@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Any
 from enum import Enum
 from pathlib import Path
+import math
 import yaml
 import jsonschema
 import discord
@@ -85,6 +86,7 @@ class Prompt:
     prompt_id: str
     full_title: str
     title: str
+    order: float = math.inf
     emoji: Optional[str] = None
     accent: Optional[str] = None
     style: discord.ButtonStyle = discord.ButtonStyle.primary
@@ -116,6 +118,7 @@ class Prompt:
             prompt_id=prompt_id,
             full_title=full_title,
             title=data["title"],
+            order=data.get("order", math.inf),
             emoji=data.get("emoji"),
             items=items,
             assignees=assignees,
@@ -132,7 +135,10 @@ class PromptsConfig:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "PromptsConfig":
         PromptsConfig.validate(data)
-        prompts = [Prompt.from_dict(id, data) for id, data in data["prompts"].items()]
+        prompts = sorted(
+            [Prompt.from_dict(id, data) for id, data in data["prompts"].items()],
+            key=lambda prompt: prompt.order,
+        )
         return cls(prompts=prompts)
 
     @classmethod
