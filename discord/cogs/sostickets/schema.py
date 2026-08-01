@@ -87,6 +87,7 @@ class Prompt:
     title: str
     emoji: Optional[str] = None
     accent: Optional[str] = None
+    style: discord.ButtonStyle = discord.ButtonStyle.primary
     assignees: list[Assignee] = field(default_factory=list)
     items: list[ModalItem] = field(default_factory=list)
     followup: Optional[str] = None
@@ -109,6 +110,8 @@ class Prompt:
                 case {"role": name}:
                     assignees.append(RoleAssignee(name))
 
+        style = discord.ButtonStyle[data.get("style", "primary")]
+
         return cls(
             prompt_id=prompt_id,
             full_title=full_title,
@@ -117,6 +120,7 @@ class Prompt:
             items=items,
             assignees=assignees,
             accent=data.get("accent"),
+            style=style,
             followup=data.get("followup"),
         )
 

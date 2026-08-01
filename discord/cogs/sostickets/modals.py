@@ -36,6 +36,7 @@ class SosTicketsButton(discord.ui.Button):
         self.custom_id = prompt.prompt_id
         self.label = prompt.title
         self.emoji = prompt.emoji
+        self.style = prompt.style
         self.prompt = prompt
         self.create_callback = create_callback
 
