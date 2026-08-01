@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@shopify/shopify-api": "^12.3.0",
-    "@shopify/shopify-app-express": "^6.0.5",
+    "@shopify/shopify-app-express": "^7.0.1",
     "express": "^5.2.1",
     "ws": "^8.21.0"
   },
