@@ -1,6 +1,6 @@
 {
   "name": "ibis",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "A discord bot for the yellow corps",
   "private": true,
   "scripts": {
