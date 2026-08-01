@@ -8,4 +8,4 @@ from . import setup
 async def test_init():
     bot = mock.AsyncMock(commands.Bot)
     await setup(bot)
-    bot.add_cog.assert_awaited()
+    bot.add_cog.assert_awaited_once()

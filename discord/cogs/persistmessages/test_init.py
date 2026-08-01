@@ -10,4 +10,4 @@ async def test_init():
     # pylint: disable-next=protected-access
     bot._connection = mock.AsyncMock()
     await setup(bot)
-    bot.add_cog.assert_awaited()
+    bot.add_cog.assert_awaited_once()
