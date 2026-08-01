@@ -8,5 +8,5 @@ from . import setup
 async def test_init():
     bot = mock.AsyncMock(Red)
     await setup(bot)
-    bot.add_cog.assert_awaited()
-    bot.register_rpc_handler.assert_called()
+    bot.add_cog.assert_awaited_once()
+    bot.register_rpc_handler.assert_called_once()
