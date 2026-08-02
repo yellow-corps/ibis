@@ -9,139 +9,121 @@ def run_test(handle: str, handles: list[str]) -> list[rules.ValidationResult]:
     return validator.validate(handle)
 
 
-# pylint: disable-next=too-many-arguments
-def assert_result(
-    handle: str,
-    expected_error: bool,
-    expected_rule: type[rules.BaseRule],
-    expected_context: Optional[str] = None,
-    *,
-    handles: Optional[list[str]] = None
-):
-    results = run_test(handle, handles or [])
-    assert len(results) == 1, results
-    assert results[0] == rules.ValidationResult(
-        expected_error, expected_rule().description, expected_context
-    )
-
-
-def assert_ok(handle: str, *, handles: Optional[list[str]] = None):
+@pytest.mark.parametrize(
+    argnames=("handle", "handles"),
+    argvalues=[
+        # duplicate: ok
+        ("abcd", ["efgh", "ijkl", "mnop"]),
+        # profane: ok
+        ("hello world", None),
+        # digit limit: ok
+        ("onetwothree", None),
+        ("abc12", None),
+        # length: ok
+        ("abc", None),
+        ("abcdefghijklmnopqrst", None),
+        # characters: ok
+        ("abcdefghij klmn56789", None),
+        ("ABCDEFGHIJ.KLMN56789", None),
+        ("tuvwxyz-01234opqrs", None),
+        ("TUVWXYZ_01234OPQRS", None),
+        # sequential punctuation: ok, leading/trailing punctuation: ok
+        ("a-b_c.d e", None),
+    ],
+)
+def test_pass(handle: str, handles: Optional[list[str]]):
     results = run_test(handle, handles or [])
     assert len(results) == 0, results
 
 
-def test_duplicate():
-    assert_result(
-        "efgh",
-        False,
-        rules.DuplicateRule,
-        "EXACTLY eFgh",
-        handles=["eFgh", "ijkl", "mnop"],
+@pytest.mark.parametrize(
+    argnames=("handle", "expected_rule", "expected_context", "handles"),
+    argvalues=[
+        ("efgh", rules.DuplicateRule, "EXACTLY eFgh", ["eFgh", "ijkl", "mnop"]),
+        (
+            "abcdeFg",
+            rules.DuplicateRule,
+            "VERY close to abcdeF, VERY close to bcdeFg",
+            ["abcdeF", "bcdeFg"],
+        ),
+        (
+            "abcdeFghijk",
+            rules.DuplicateRule,
+            "close to abcdeFg, close to efghijk",
+            ["abcdeFg", "efghijk"],
+        ),
+        (
+            "abcdeFghijk",
+            rules.DuplicateRule,
+            "VERY close to Fghijkabcde",
+            ["Fghijkabcde"],
+        ),
+        # match due to BaseRule.sanitise_handle
+        (
+            "abcdeFgh01357",
+            rules.DuplicateRule,
+            "EXACTLY abcdeFghoiest",
+            ["abcdeFghoiest"],
+        ),
+        ("butts", rules.ProfaneRule, None, None),
+        ("hahabutts", rules.ProfaneRule, None, None),
+        ("buttshaha", rules.ProfaneRule, None, None),
+        ("abc123", rules.DigitLimitRule, "3 of 6 characters are digits", None),
+        ("123456", rules.DigitLimitRule, "6 of 6 characters are digits", None),
+    ],
+)
+def test_warning(
+    handle: str,
+    expected_rule: type[rules.BaseRule],
+    expected_context: Optional[str],
+    handles: Optional[list[str]],
+):
+    results = run_test(handle, handles or [])
+    assert len(results) == 1, results
+    assert results[0] == rules.ValidationResult(
+        False, expected_rule().description, expected_context
     )
 
-    assert_result(
-        "abcdeFg",
-        False,
-        rules.DuplicateRule,
-        "VERY close to abcdeF, VERY close to bcdeFg",
-        handles=["abcdeF", "bcdeFg"],
+
+@pytest.mark.parametrize(
+    argnames=("handle", "expected_rule", "expected_context"),
+    argvalues=[
+        ("ab", rules.LengthRule, "Length: 2 characters"),
+        ("abcdefghijklmnopqrstu", rules.LengthRule, "Length: 21 characters"),
+        (
+            "abc!@#$%^&*()=+def",
+            rules.InvalidCharactersRule,
+            "Invalid characters: !, #, $, %, &, (, ), *, +, =, @, ^",
+        ),
+        (
+            ",<>;:'\"[]\\{}|def",
+            rules.InvalidCharactersRule,
+            "Invalid characters: \", ', ,, :, ;, <, >, [, \\, ], {, |, }",
+        ),
+        ("ab--cd", rules.SequentialPunctuationRule, None),
+        ("ab__cd", rules.SequentialPunctuationRule, None),
+        ("ab..cd", rules.SequentialPunctuationRule, None),
+        ("ab  cd", rules.SequentialPunctuationRule, None),
+        ("ab-_cd", rules.SequentialPunctuationRule, None),
+        ("ab. cd", rules.SequentialPunctuationRule, None),
+        ("-abc", rules.LeadingTrailingPunctuationRule, None),
+        ("_abc", rules.LeadingTrailingPunctuationRule, None),
+        (".abc", rules.LeadingTrailingPunctuationRule, None),
+        (" abc", rules.LeadingTrailingPunctuationRule, None),
+        ("abc-", rules.LeadingTrailingPunctuationRule, None),
+        ("abc_", rules.LeadingTrailingPunctuationRule, None),
+        ("abc.", rules.LeadingTrailingPunctuationRule, None),
+        ("abc ", rules.LeadingTrailingPunctuationRule, None),
+    ],
+)
+def test_error(
+    handle: str, expected_rule: type[rules.BaseRule], expected_context: Optional[str]
+):
+    results = run_test(handle, [])
+    assert len(results) == 1, results
+    assert results[0] == rules.ValidationResult(
+        True, expected_rule().description, expected_context
     )
-
-    assert_result(
-        "abcdeFghijk",
-        False,
-        rules.DuplicateRule,
-        "close to abcdeFg, close to efghijk",
-        handles=["abcdeFg", "efghijk"],
-    )
-
-    assert_result(
-        "abcdeFghijk",
-        False,
-        rules.DuplicateRule,
-        "VERY close to Fghijkabcde",
-        handles=["Fghijkabcde"],
-    )
-
-    # match due to BaseRule.sanitise_handle
-    assert_result(
-        "abcdeFgh01357",
-        False,
-        rules.DuplicateRule,
-        "EXACTLY abcdeFghoiest",
-        handles=["abcdeFghoiest"],
-    )
-
-    assert_ok("abcd", handles=["efgh", "ijkl", "mnop"])
-
-
-def test_profane():
-    assert_result("butts", False, rules.ProfaneRule)
-    assert_result("hahabutts", False, rules.ProfaneRule)
-    assert_result("buttshaha", False, rules.ProfaneRule)
-
-    assert_ok("hello world")
-
-
-def test_digit_limit():
-    assert_result("abc123", False, rules.DigitLimitRule, "3 of 6 characters are digits")
-    assert_result("123456", False, rules.DigitLimitRule, "6 of 6 characters are digits")
-
-    assert_ok("abc")
-    assert_ok("abc12")
-
-
-def test_length():
-    assert_result("ab", True, rules.LengthRule, "Length: 2 characters")
-    assert_result(
-        "abcdefghijklmnopqrstu", True, rules.LengthRule, "Length: 21 characters"
-    )
-    assert_ok("abc")
-    assert_ok("abcdefghijklmnopqrst")
-
-
-def test_invalid_characters():
-    assert_result(
-        "abc!@#$%^&*()=+def",
-        True,
-        rules.InvalidCharactersRule,
-        "Invalid characters: !, #, $, %, &, (, ), *, +, =, @, ^",
-    )
-    assert_result(
-        ",<>;:'\"[]\\{}|def",
-        True,
-        rules.InvalidCharactersRule,
-        "Invalid characters: \", ', ,, :, ;, <, >, [, \\, ], {, |, }",
-    )
-
-    assert_ok("abcdefghij klmn56789")
-    assert_ok("ABCDEFGHIJ.KLMN56789")
-    assert_ok("tuvwxyz-01234opqrs")
-    assert_ok("TUVWXYZ_01234OPQRS")
-
-
-def test_sequential_punctuation():
-    assert_result("ab--cd", True, rules.SequentialPunctuationRule)
-    assert_result("ab__cd", True, rules.SequentialPunctuationRule)
-    assert_result("ab..cd", True, rules.SequentialPunctuationRule)
-    assert_result("ab  cd", True, rules.SequentialPunctuationRule)
-    assert_result("ab-_cd", True, rules.SequentialPunctuationRule)
-    assert_result("ab. cd", True, rules.SequentialPunctuationRule)
-
-    assert_ok("a-b_c.d e")
-
-
-def test_leading_trailing_punctuation():
-    assert_result("-abc", True, rules.LeadingTrailingPunctuationRule)
-    assert_result("_abc", True, rules.LeadingTrailingPunctuationRule)
-    assert_result(".abc", True, rules.LeadingTrailingPunctuationRule)
-    assert_result(" abc", True, rules.LeadingTrailingPunctuationRule)
-    assert_result("abc-", True, rules.LeadingTrailingPunctuationRule)
-    assert_result("abc_", True, rules.LeadingTrailingPunctuationRule)
-    assert_result("abc.", True, rules.LeadingTrailingPunctuationRule)
-    assert_result("abc ", True, rules.LeadingTrailingPunctuationRule)
-
-    assert_ok("a-b_c.d e")
 
 
 def test_all():
@@ -181,7 +163,7 @@ def test_all():
     )
 
 
-def test_errors(caplog: pytest.LogCaptureFixture):
+def test_exceptions(caplog: pytest.LogCaptureFixture):
     with pytest.raises(ValueError, match="handle cannot be empty"):
         rules.HandleValidator([]).validate("")
 
