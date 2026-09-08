@@ -21,11 +21,11 @@
     "ws": "^8.21.0"
   },
   "devDependencies": {
-    "@shopify/cli": "^3.90.1",
+    "@shopify/cli": "^4.7.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.3",
     "@types/ws": "^8.18.1",
     "esbuild": "^0.28.1",
-    "tsx": "^4.21.0"
+    "tsx": "^4.23.13"
   }
 }
