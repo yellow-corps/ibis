@@ -10,6 +10,7 @@
       "regional_format": "en-AU",
       "packages": [
         "alias",
+        "autotagger",
         "backup",
         "cleanup",
         "csvmembers",
@@ -32,6 +33,7 @@
         }
       },
       "Alias": { "8927348724": {} },
+      "AutoTagger": { "301473723569536906": {} },
       "Backup": { "401864250600270244": {} },
       "Cleanup": { "8927348724": {} },
       "CsvMembers": { "778440330267960653": {} },

@@ -292,6 +292,7 @@ We can persist messages to disk so that they can be looked up at any time, inclu
 
 # Cog Instructions
 
+- [Auto Tagger](discord/cogs/autotagger/README.md)
 - [CSV Members](discord/cogs/csvmembers/README.md)
 - [Export](discord/cogs/export/README.md)
 - [Name Changer](discord/cogs/namechanger/README.md)
