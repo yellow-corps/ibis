@@ -435,9 +435,7 @@ class SosTicketsCog(commands.Cog):
                 ctx, "Current prompts config is attached", file=file
             )
         else:
-            await ibis.reply.success(
-                ctx, "No prompts config is defined currently"
-            )
+            await ibis.reply.success(ctx, "No prompts config is defined currently")
 
     @sostickets_prompts_config.command("set")
     async def sostickets_prompts_config_set(self, ctx: commands.Context):
